@@ -6,6 +6,7 @@
 Instrument_GPIB = 14		#GPIB
 Average_times = 20		# average times for Txp and ACLR measurement
 IMSI = '001010123456789'
+# Use negative value for path loss
 path_loss = {700: -0.3, 1200: -0.3, 1700: -0.6, 2200: -0.6}		#initiate path loss table (using dict)
 #Anritsu 8820C setting
 Integrity = 1			# Integrity ON|OFF

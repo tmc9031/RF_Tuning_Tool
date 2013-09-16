@@ -117,8 +117,9 @@ class Anritsu8820C(Instrument):
 			str2 = "{0} {1}MHz, {2}, {2}, {2}".format(str1, str(keys), str(abs(path_loss[keys])))
 			print(str2)
 			self.write(str2)
-		#self.write(str1)
-		#self.write(str2)
+		self.write("DLEXTLOSSW COMMON")		# Set DL external loss to COMMON
+		self.write("ULEXTLOSSW COMMON")		# Set UL external loss to COMMON
+		self.write("AUEXTLOSSW COMMON")		# Set AUX external loss to COMMON
 	
 	def update_link_settings(self):
 		"""
