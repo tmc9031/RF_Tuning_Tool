@@ -1,7 +1,14 @@
 ﻿#!/usr/bin/env python
-# For Agilent8960 WCDMA measurement
-# Using PyVisa and Python 2.7.5
-# William Chang
+"""
+	For Agilent8960 WCDMA/LTE GPIB commands
+	Using PyVisa and Python 2.7.5
+	
+	 This file is part of RF_Tuning_Tool.
+
+	:copyright: (c) 2013 by the A-mao Chang (maomaoto@gmail.com)
+	:license: MIT, see COPYING for more details.
+
+"""
 
 from visa import *
 import time
