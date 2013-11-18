@@ -1,7 +1,13 @@
 #!/usr/bin/env python
-# Control Qualcomm based phone via QMSL lib
-# William Chang
+"""
+	Control Qualcomm based phone via QMSL lib
+	
+	 This file is part of RF_Tuning_Tool.
 
+	:copyright: (c) 2013 by the A-mao Chang (maomaoto@gmail.com)
+	:license: MIT, see COPYING for more details.
+
+"""
 import time
 from ctypes import *
 from WCDMA_attributes import *
