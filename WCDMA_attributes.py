@@ -1,6 +1,13 @@
 #!/usr/bin/env python
-# for instrument/phone setting
-# William Chang
+"""
+	Parameters for instrument/phone setting
+	
+	 This file is part of RF_Tuning_Tool.
+
+	:copyright: (c) 2013 by the A-mao Chang (maomaoto@gmail.com)
+	:license: MIT, see COPYING for more details.
+
+"""
 
 #Instrument setting
 Instrument_GPIB = 14		#GPIB

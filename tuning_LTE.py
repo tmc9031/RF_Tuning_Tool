@@ -1,7 +1,13 @@
 #!/usr/bin/env python
-# For facilitate LTETx tuning
-# William Chang
+"""
+	To facilitate LTE Tx tuning
+	
+	 This file is part of RF_Tuning_Tool.
 
+	:copyright: (c) 2013 by the A-mao Chang (maomaoto@gmail.com)
+	:license: MIT, see COPYING for more details.
+
+"""
 import msvcrt
 import sys
 from WCDMA_attributes import *

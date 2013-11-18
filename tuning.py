@@ -1,6 +1,13 @@
 #!/usr/bin/env python
-# For facilitate WCDMA Tx tuning
-# William Chang
+"""
+	To facilitate WCDMA Tx tuning
+	
+	 This file is part of RF_Tuning_Tool.
+
+	:copyright: (c) 2013 by the A-mao Chang (maomaoto@gmail.com)
+	:license: MIT, see COPYING for more details.
+
+"""
 
 import msvcrt
 import sys

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-	To facilitate WCDMA/LTETx tuning with GUI
+	To facilitate WCDMA/LTE Tx tuning with GUI
 	
 	 This file is part of RF_Tuning_Tool.
 
