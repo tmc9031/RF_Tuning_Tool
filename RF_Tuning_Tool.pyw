@@ -1,7 +1,13 @@
 #!/usr/bin/env python
-# To facilitate WCDMA/LTETx tuning with GUI
-# William Chang
+"""
+	To facilitate WCDMA/LTETx tuning with GUI
+	
+	 This file is part of RF_Tuning_Tool.
 
+	:copyright: (c) 2013 by the A-mao Chang (maomaoto@gmail.com)
+	:license: MIT, see COPYING for more details.
+
+"""
 import sys
 import time
 from PySide.QtCore import *
