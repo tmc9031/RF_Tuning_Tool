@@ -1,28 +1,20 @@
 #!/usr/bin/env python
-"""
-	Parameters for instrument/phone setting
-	
-	 This file is part of RF_Tuning_Tool.
-
-	:copyright: (c) 2013 by the A-mao Chang (maomaoto@gmail.com)
-	:license: MIT, see COPYING for more details.
-
-"""
+# for instrument/phone setting
+# William Chang
 
 #Instrument setting
 Instrument_GPIB = 14		#GPIB
 Average_times = 20		# average times for Txp and ACLR measurement
 IMSI = '001010123456789'
-# Use negative value for path loss
 path_loss = {700: -0.3, 1200: -0.3, 1700: -0.6, 2200: -0.6}		#initiate path loss table (using dict)
 #Anritsu 8820C setting
 Integrity = 1			# Integrity ON|OFF
 #Phone settings
 bUseQPST = 1			# bUseQPST = true to use QPST, FALSE to use QPHONEMS 
-Phone_Com_Port = 10		# Phone COM port
+Phone_Com_Port = 45		# Phone COM port
 bSet_WCDMA_Waveform = 0	# For GLU(MSM8974),  not to set WCDMA waveform
-PDM_init = 83			# Start PDM (High gain mode default PDM) (RTR6285:210, WTR1605:90)
-PDM_low = 60			# PDM for -20dBm (Low gain mode PDM) (RTR6285:140, WTR1605:60)
+PDM_init = 88			# Start PDM (High gain mode default PDM) (RTR6285:210, WTR1605:90)
+PDM_low = 50			# PDM for -20dBm (Low gain mode PDM) (RTR6285:140, WTR1605:60)
 PDM_max = 255			# PDM Max (RTR6285:255, WTR1605:127)
 PDM_min = 0
 iPArange_high = 2			# for high gain mode (RTR6285:3, WTR1605:0)
@@ -75,6 +67,8 @@ Band_UL_ch_map = dict(B1=WCDMA_B1_UL_ch, B2=WCDMA_B2_UL_ch,
 # channel list
 LTE_B1_DL_ch_5M = [25, 300, 575]
 LTE_B1_UL_ch_5M = [18025, 18300, 18575]
+LTE_B2_DL_ch_5M = [625, 900, 1175]
+LTE_B2_UL_ch_5M = [18625, 18900, 19175]
 LTE_B3_DL_ch_5M = [1225, 1575, 1925]
 LTE_B3_UL_ch_5M = [19225, 19575, 19925]
 LTE_B7_DL_ch_5M = [2775, 3100, 3425]
@@ -95,18 +89,16 @@ LTE_B26_DL_ch_5M = [8715, 8865, 9015]
 LTE_B26_UL_ch_5M = [26715, 26865, 27015]
 LTE_B28_DL_ch_5M = [9235, 9435, 9635]
 LTE_B28_UL_ch_5M = [27235, 27435, 27635]
-LTE_B41_DL_ch_5M = [39675, 40620, 41565]
-LTE_B41_UL_ch_5M = [39675, 40620, 41565]
 
 # band-channel mapping
-LTE_Band_DL_ch_map_5M = dict(B1=LTE_B1_DL_ch_5M, B3=LTE_B3_DL_ch_5M, B7=LTE_B7_DL_ch_5M,
+LTE_Band_DL_ch_map_5M = dict(B1=LTE_B1_DL_ch_5M, B2=LTE_B2_DL_ch_5M, B3=LTE_B3_DL_ch_5M, B7=LTE_B7_DL_ch_5M,
 						B8=LTE_B8_DL_ch_5M, B11=LTE_B11_DL_ch_5M, B13=LTE_B13_DL_ch_5M, 
 						B19=LTE_B19_DL_ch_5M, B20=LTE_B20_DL_ch_5M, B21=LTE_B21_DL_ch_5M, 
-						B26=LTE_B26_DL_ch_5M, B28=LTE_B28_DL_ch_5M, B41=LTE_B41_DL_ch_5M)
-LTE_Band_UL_ch_map_5M = dict(B1=LTE_B1_UL_ch_5M, B3=LTE_B3_UL_ch_5M, B7=LTE_B7_UL_ch_5M,
+						B26=LTE_B26_DL_ch_5M, B28=LTE_B28_DL_ch_5M)
+LTE_Band_UL_ch_map_5M = dict(B1=LTE_B1_UL_ch_5M, B2=LTE_B2_UL_ch_5M, B3=LTE_B3_UL_ch_5M, B7=LTE_B7_UL_ch_5M,
 						B8=LTE_B8_UL_ch_5M, B11=LTE_B11_UL_ch_5M, B13=LTE_B13_UL_ch_5M, 
 						B19=LTE_B19_UL_ch_5M, B20=LTE_B20_UL_ch_5M, B21=LTE_B21_UL_ch_5M, 
-						B26=LTE_B26_UL_ch_5M, B28=LTE_B28_UL_ch_5M, B41=LTE_B41_UL_ch_5M)
+						B26=LTE_B26_UL_ch_5M, B28=LTE_B28_UL_ch_5M)
 					
 
 # Below is QMSL defined variable
@@ -267,10 +259,10 @@ RFCOM_BW_LTE_20MHz = 5
 Band_QMSL_map = dict(B1=PHONE_MODE_WCDMA_IMT, B2=PHONE_MODE_WCDMA_1900B,
 				B4=PHONE_MODE_WCDMA_BC4, B5=PHONE_MODE_WCDMA_800, B8=PHONE_MODE_WCDMA_BC8, 
 				B9=PHONE_MODE_WCDMA_BC9,B19=PHONE_MODE_WCDMA_BC19)
-LTE_Band_QMSL_map = dict(B1=PHONE_MODE_LTE_B1, B3=PHONE_MODE_LTE_B3, B7=PHONE_MODE_LTE_B7, 
+LTE_Band_QMSL_map = dict(B1=PHONE_MODE_LTE_B1, B2=PHONE_MODE_LTE_B2, B3=PHONE_MODE_LTE_B3, B7=PHONE_MODE_LTE_B7, 
 					B8=PHONE_MODE_LTE_B8, B11=PHONE_MODE_LTE_B11, B13=PHONE_MODE_LTE_B13,
 					B19=PHONE_MODE_LTE_B19, B20=PHONE_MODE_LTE_B20, B21=PHONE_MODE_LTE_B21,
-					B26=PHONE_MODE_LTE_B26, B28=PHONE_MODE_LTE_B28, B41=PHONE_MODE_LTE_B41)
+					B26=PHONE_MODE_LTE_B26, B28=PHONE_MODE_LTE_B28)
 				
 #Anritsu 8820C CALL Status
 ANRITSU_OFF = 0		#Call processing function set to Off
