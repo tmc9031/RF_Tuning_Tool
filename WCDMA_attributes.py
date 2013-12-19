@@ -11,7 +11,7 @@ path_loss = {700: -0.3, 1200: -0.3, 1700: -0.6, 2200: -0.6}		#initiate path loss
 Integrity = 1			# Integrity ON|OFF
 #Phone settings
 bUseQPST = 1			# bUseQPST = true to use QPST, FALSE to use QPHONEMS 
-Phone_Com_Port = 45		# Phone COM port
+Phone_Com_Port = 3		# Phone COM port
 bSet_WCDMA_Waveform = 0	# For GLU(MSM8974),  not to set WCDMA waveform
 PDM_init = 88			# Start PDM (High gain mode default PDM) (RTR6285:210, WTR1605:90)
 PDM_low = 50			# PDM for -20dBm (Low gain mode PDM) (RTR6285:140, WTR1605:60)
@@ -96,11 +96,11 @@ LTE_B28B_UL_ch_5M = [27435, 27535, 27635]
 LTE_Band_DL_ch_map_5M = dict(B1=LTE_B1_DL_ch_5M, B2=LTE_B2_DL_ch_5M, B3=LTE_B3_DL_ch_5M, B7=LTE_B7_DL_ch_5M,
 						B8=LTE_B8_DL_ch_5M, B11=LTE_B11_DL_ch_5M, B13=LTE_B13_DL_ch_5M, 
 						B19=LTE_B19_DL_ch_5M, B20=LTE_B20_DL_ch_5M, B21=LTE_B21_DL_ch_5M, 
-						B26=LTE_B26_DL_ch_5M, B28A=LTE_B28A_DL_ch_5M, B28B=LTE_B28B_DL_ch_5M)
+						B26=LTE_B26_DL_ch_5M, B281=LTE_B28A_DL_ch_5M, B282=LTE_B28B_DL_ch_5M)
 LTE_Band_UL_ch_map_5M = dict(B1=LTE_B1_UL_ch_5M, B2=LTE_B2_UL_ch_5M, B3=LTE_B3_UL_ch_5M, B7=LTE_B7_UL_ch_5M,
 						B8=LTE_B8_UL_ch_5M, B11=LTE_B11_UL_ch_5M, B13=LTE_B13_UL_ch_5M, 
 						B19=LTE_B19_UL_ch_5M, B20=LTE_B20_UL_ch_5M, B21=LTE_B21_UL_ch_5M, 
-						B26=LTE_B26_UL_ch_5M, B28A=LTE_B28A_UL_ch_5M, B28B=LTE_B28B_UL_ch_5M)
+						B26=LTE_B26_UL_ch_5M, B281=LTE_B28A_UL_ch_5M, B282=LTE_B28B_UL_ch_5M)
 					
 
 # Below is QMSL defined variable
@@ -264,7 +264,7 @@ Band_QMSL_map = dict(B1=PHONE_MODE_WCDMA_IMT, B2=PHONE_MODE_WCDMA_1900B,
 LTE_Band_QMSL_map = dict(B1=PHONE_MODE_LTE_B1, B2=PHONE_MODE_LTE_B2, B3=PHONE_MODE_LTE_B3, B7=PHONE_MODE_LTE_B7, 
 					B8=PHONE_MODE_LTE_B8, B11=PHONE_MODE_LTE_B11, B13=PHONE_MODE_LTE_B13,
 					B19=PHONE_MODE_LTE_B19, B20=PHONE_MODE_LTE_B20, B21=PHONE_MODE_LTE_B21,
-					B26=PHONE_MODE_LTE_B26, B28A=PHONE_MODE_LTE_B28, B28B=PHONE_MODE_LTE_B28)
+					B26=PHONE_MODE_LTE_B26, B281=PHONE_MODE_LTE_B28, B282=PHONE_MODE_LTE_B28)
 				
 #Anritsu 8820C CALL Status
 ANRITSU_OFF = 0		#Call processing function set to Off
