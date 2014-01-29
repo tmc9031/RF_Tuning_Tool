@@ -134,7 +134,12 @@ class QCOM_phone:
 		else:
 			print("Is FTM Mode function fail")
 	
-	def set_band(self, eModeId, eNewMode):	#eModeId: technology  eNewMode: band
+	def set_band(self, eModeId, eNewMode):	
+		"""
+			Set technology/band
+			eModeId: technology  
+			eNewMode: band
+		"""
 		bOK = self.qdll.QLIB_FTM_SET_MODE_ID(self.g_hResourceContext, eModeId)  
 		if (bool(bOK) == False): 
 			print("Set FTM tech {0}: {1}".format(eModeId, pass_dict[bool(bOK)]))
@@ -297,6 +302,56 @@ class QCOM_phone:
 	
 	def disconnect(self):
 		self.qdll.QLIB_DisconnectServer( self.g_hResourceContext )
+
+	def set_GSM_Tx_burst(self):
+		"""
+			Set GSM Tx burst parameters (fixed)
+			According to QCOM reference, it is "Set Tx Burst".
+			But it may change to "Set Tx Continue" depends on tuning experience
+		"""
+		iSlotNum = 0
+		iDataSource = FTM_GSM_TX_DATA_SOURCE_PSDRND
+		iTSTindex = 5
+		iNumBursts = 0
+		bIsInfiniteDuration = 1
+		bOK = self.qdll.QLIB_FTM_SET_TRANSMIT_BURST(self.g_hResourceContext, iSlotNum, iDataSource, iTSCindex, iNumBursts, bIsInfiniteDuration)  
+		if (bool(bOK) == False): 
+			print("Set GSM Tx Burst: {0}".format(pass_dict[bool(bOK)]))
+	
+	def set_TCXO_Adj_PDM(self, iPDMvalue = 0):
+		"""
+			For GSM tuning
+			Set TCXO Adj PDM to 0
+		"""
+		iPDMtype = 0	#GSM mode 0: Trk Lo Adjust PDM
+		iPDMvalue = 0	#Set TXCO Adj PDM to 0
+		bOK = self.qdll.QLIB_FTM_SET_PDM_signed( self.g_hResourceContext, iPDMtype, iPDMvalue)
+		if (bool(bOK) == False): 
+			print("Set GSM TCXO Adj PDM {0}: {1}".format(iPDMvalue, pass_dict[bool(bOK)]))
+			
+	def set_GSM_Linear_PA_range(self):
+		"""
+			Set GSM Linear PA range
+			Slot: 0
+			Range: 0
+		"""
+		iSlotNum = 0
+		iPaRange = 0
+		bOK = self.qdll.QLIB_FTM_SET_GSM_LINEAR_PA_RANGE( self.g_hResourceContext, iSlotNum, iPaRange)
+		if (bool(bOK) == False): 
+			print("Set GSM Linear PA range: {0}".format(pass_dict[bool(bOK)]))
+	
+	def set_GSM_Linear_RGI(self, iRgiIndex = 31):
+		"""
+			Set GSM Linear RGI
+			For tuning, it sets to 31 by default
+		"""
+		iSlotNum = 0
+		iModType = 1	#GSM
+		bOK = self.qdll.QLIB_FTM_GSM_SET_LINEAR_RGI(self.g_hResourceContext, iSlotNum, iRgiIndex, iModType)
+		if (bool(bOK) == False): 
+			print("Set GSM Linear RGI {0}: {1}".format(iRgiIndex, pass_dict[bool(bOK)]))
+
 	
 if __name__ == "__main__":
 	
