@@ -130,9 +130,10 @@ class Anritsu8820C(Instrument):
 			self.write("EXTLOSSW COMMON")	
 		elif s == "WCDMA":
 			self.write("DLEXTLOSSW COMMON")		# Set DL external loss to COMMON
-                        self.write("ULEXTLOSSW COMMON")		# Set UL external loss to COMMON
-                        self.write("AUEXTLOSSW COMMON")		# Set AUX external loss to COMMON
-		
+            self.write("ULEXTLOSSW COMMON")		# Set UL external loss to COMMON
+            self.write("AUEXTLOSSW COMMON")		# Set AUX external loss to COMMON
+		elif s == "GSM":
+			self.write("EXTLOSSW COMMON")
 	
 	def update_link_settings(self):
 		"""
@@ -449,7 +450,53 @@ class Anritsu8820C(Instrument):
 		ACLR.append((Decimal(self.ask("MODPWR? LOW1,AVG"))))
 		ACLR.append((Decimal(self.ask("MODPWR? UP1,AVG"))))
 		return ACLR
+
+	def set_GSM_channel(self, ch):
+		"""
+			Set GSM channel
+			In order to reduce querry command, separate GSM channel command
+		"""
+		s = "CHAN "+str(ch)	# set UL ch
+		self.write(s)
+		
+	def set_GSM_band(self, band):
+		"""
+			Set GSM band
+			Anritsu 8820c only cares DCS/PCS, but Agilent8960 needs different setting for QB
+		"""
+		if band == "DCS":
+			self.write("SYSCMB DCS1800")	#Set system combination to GSM/DCS1800
+			self.write("BANDIND DCS1800")	#Set band indicator to DCS
+		elif band == "PCS":
+			self.write("SYSCMB PCS1900")	#Set system combination to GSM/PCS1900
+			self.write("BANDIND PCS1900")	#Set band indicator to PCS
 	
+	def set_GSM_power_mea(self, count = 20):
+		"""
+			GSM Tx power measurement setting
+			count: measure count
+		"""
+		#Set GSM mode
+		self.write("OPEMODE GSM")
+		#Tx power setting
+		self.write("PWR_MEAS ON")		# Set [Power Measurement] to [On]
+		s = "PWR_COUNT "+str(count)		# Set [Average Count] to [count] times
+		self.write(s)
+		self.write("MSPWR 0")			#Set PCL0 (for all bands)
+		self.write("ILVLCTRL MANUAL")	#Set input level according to Manual
+		self.write("ILVL 34")			#Set input level 34dBm, may change after test
+	
+	def init_GSM_power(self):
+		self.write("SWP")
+		
+	def read_GSM_power(self):
+		"""
+			return GSM average tx power
+		"""
+		s = self.ask("AVG_TXPWR? DBM")
+		Txp = Decimal(s)
+		return Txp
+		
 if __name__ == "__main__":
 	
 	anritsu = Anritsu8820C("GPIB::14")
