@@ -104,6 +104,7 @@ LTE_Band_UL_ch_map_5M = dict(B1=LTE_B1_UL_ch_5M, B2=LTE_B2_UL_ch_5M, B3=LTE_B3_U
 					
 
 # Below is QMSL defined variable
+# Just copy from QLib_Defines.h. It should be better way to include or reference, but I don't know at this moment.
 
 # Definition of the COM port value that will be used to "auto detect" the COM port
 QLIB_COM_AUTO_DETECT  = 0xFFFF
@@ -256,6 +257,14 @@ RFCOM_BW_LTE_5MHz = 2
 RFCOM_BW_LTE_10MHz = 3
 RFCOM_BW_LTE_15MHz = 4
 RFCOM_BW_LTE_20MHz = 5
+
+
+#GSM TX DataSources Enum
+FTM_GSM_TX_DATA_SOURCE_PSDRND = 0	#Pseudorandom
+FTM_GSM_TX_DATA_SOURCE_TONE = 1		#Single tone
+FTM_GSM_TX_DATA_SOURCE_BUFFER = 2	#Buffer
+FTM_GSM_TX_DATA_SOURCE_TWOTONE = 3	#2 tone
+
 
 #Band-QMSL variable mapping
 Band_QMSL_map = dict(B1=PHONE_MODE_WCDMA_IMT, B2=PHONE_MODE_WCDMA_1900B,
