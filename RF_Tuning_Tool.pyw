@@ -52,7 +52,7 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 		self.setupPhone()
 		
 		
-		self.comboBoxTech.addItems(("LTE","WCDMA"))
+		self.comboBoxTech.addItems(("LTE", "WCDMA", "GSM"))
 		self.comboBoxTech.activated[unicode].connect(self.comboBoxTechSelected)
 		self.comboBoxBand.activated[unicode].connect(self.comboBoxBandSelected)
 		
@@ -116,6 +116,10 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 		elif tech == "WCDMA":
 			self.comboBoxBand.clear()
 			self.comboBoxBand.addItems(sorted(Band_QMSL_map.keys(), key=lambda x: int(x[1:])))
+			self.qlBW.setText("--")
+		elif tech == "GSM":
+			self.comboBoxBand.clear()
+			self.comboBoxBand.addItems(sorted(GSM_Band_QMSL_map.keys()))
 			self.qlBW.setText("--")
 		else:
 			QMessageBox.warning(self, "Error", "comboBoxTech Error")
@@ -192,6 +196,21 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.qlPDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
+			
+		elif self.comboBoxTech.currentText() == "GSM":
+			"""
+				For GSM, just scan all channel max power and show on table
+				May need to deactive all other buttons 
+			"""
+			# Set variable values
+			self.test_band = band
+			self.UL_ch = GSM_Band_UL_ch_map[self.test_band][1]
+			#preset instrument
+			self.callbox.preset()
+			self.callbox.update_path_loss()
+			# Set FDD test mode
+			self.callbox.set_FDD_test_mode()
+			
 			
 		
 		# measure one time
