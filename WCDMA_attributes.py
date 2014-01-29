@@ -102,7 +102,22 @@ LTE_Band_UL_ch_map_5M = dict(B1=LTE_B1_UL_ch_5M, B2=LTE_B2_UL_ch_5M, B3=LTE_B3_U
 						B19=LTE_B19_UL_ch_5M, B20=LTE_B20_UL_ch_5M, B21=LTE_B21_UL_ch_5M, 
 						B26=LTE_B26_UL_ch_5M, B281=LTE_B28A_UL_ch_5M, B282=LTE_B28B_UL_ch_5M)
 					
+# GSM attributes
+# channel list
+GSM_EGSM_DL_ch = [975, 37, 124]
+GSM_EGSM_UL_ch = GSM_EGSM_DL_ch
+GSM_GSM850_DL_ch = [128, 190, 251]
+GSM_GSM850_UL_ch = GSM_GSM850_DL_ch
+GSM_DCS_DL_ch = [512, 700, 885]
+GSM_DCS_UL_ch = GSM_DCS_DL_ch
+GSM_PCS_DL_ch = [512, 661, 810]
+GSM_PCS_UL_ch = GSM_PCS_DL_ch
 
+# band-channel mapping
+GSM_Band_DL_ch_map = dict{EGSM=GSM_EGSM_DL_ch, GSM850=GSM_GSM850_DL_ch, DCS=GSM_DCS_DL_ch, PCS=GSM_PCS_DL_ch}
+GSM_Band_UL_ch_map = GSM_Band_DL_ch_map
+
+					
 # Below is QMSL defined variable
 # Just copy from QLib_Defines.h. It should be better way to include or reference, but I don't know at this moment.
 
