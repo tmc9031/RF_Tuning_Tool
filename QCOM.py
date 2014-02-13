@@ -311,7 +311,7 @@ class QCOM_phone:
 		"""
 		iSlotNum = 0
 		iDataSource = FTM_GSM_TX_DATA_SOURCE_PSDRND
-		iTSTindex = 5
+		iTSCindex = 5
 		iNumBursts = 0
 		bIsInfiniteDuration = 1
 		bOK = self.qdll.QLIB_FTM_SET_TRANSMIT_BURST(self.g_hResourceContext, iSlotNum, iDataSource, iTSCindex, iNumBursts, bIsInfiniteDuration)  

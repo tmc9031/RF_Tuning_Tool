@@ -207,6 +207,10 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.UL_ch = GSM_Band_UL_ch_map[self.test_band][0]
 			
 			#Callbox setting
+			#switch Instrument to GSM mode
+			if (self.callbox.switch_to_GSM() == 1):
+				self.print_message("<font color=red> Switch Instrument format fail.</color>")
+				sys.exit()
 			#preset instrument
 			self.callbox.preset()
 			self.callbox.update_path_loss()
@@ -218,6 +222,7 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.displayChannel()
 			# Setup TxP setting
 			self.callbox.set_GSM_power_mea()
+			self.callbox.set_GSM_FTM_power_mea_continuous()
 			
 			# Phone setting
 			self.eModeId = FTM_MODE_ID_GSM
@@ -573,7 +578,7 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			# Sweep for GSM
 			self.callbox.init_GSM_power()
 			#read tx power
-			self.txp = self.read_GSM_power()
+			self.txp = self.callbox.read_GSM_power()
 		
 		
 	def print_message(self, param):

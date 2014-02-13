@@ -130,8 +130,8 @@ class Anritsu8820C(Instrument):
 			self.write("EXTLOSSW COMMON")	
 		elif s == "WCDMA":
 			self.write("DLEXTLOSSW COMMON")		# Set DL external loss to COMMON
-            self.write("ULEXTLOSSW COMMON")		# Set UL external loss to COMMON
-            self.write("AUEXTLOSSW COMMON")		# Set AUX external loss to COMMON
+			self.write("ULEXTLOSSW COMMON")		# Set UL external loss to COMMON
+			self.write("AUEXTLOSSW COMMON")		# Set AUX external loss to COMMON
 		elif s == "GSM":
 			self.write("EXTLOSSW COMMON")
 	
@@ -485,6 +485,10 @@ class Anritsu8820C(Instrument):
 		self.write("MSPWR 0")			#Set PCL0 (for all bands)
 		self.write("ILVLCTRL MANUAL")	#Set input level according to Manual
 		self.write("ILVL 34")			#Set input level 34dBm, may change after test
+	
+	def set_GSM_FTM_power_mea_continuous(self):
+		# Set GSM COMMON->Measuring Object->Continuous for tuning
+		self.write("MEASOBJ CONT")
 	
 	def init_GSM_power(self):
 		self.write("SWP")

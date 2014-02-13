@@ -11,7 +11,7 @@ path_loss = {700: -0.3, 1200: -0.3, 1700: -0.6, 2200: -0.6}		#initiate path loss
 Integrity = 1			# Integrity ON|OFF
 #Phone settings
 bUseQPST = 1			# bUseQPST = true to use QPST, FALSE to use QPHONEMS 
-Phone_Com_Port = 3		# Phone COM port
+Phone_Com_Port = 13		# Phone COM port
 bSet_WCDMA_Waveform = 0	# For GLU(MSM8974),  not to set WCDMA waveform
 PDM_init = 88			# Start PDM (High gain mode default PDM) (RTR6285:210, WTR1605:90)
 PDM_low = 50			# PDM for -20dBm (Low gain mode PDM) (RTR6285:140, WTR1605:60)
@@ -114,7 +114,7 @@ GSM_PCS_DL_ch = [512, 661, 810]
 GSM_PCS_UL_ch = GSM_PCS_DL_ch
 
 # band-channel mapping
-GSM_Band_DL_ch_map = dict{EGSM=GSM_EGSM_DL_ch, GSM850=GSM_GSM850_DL_ch, DCS=GSM_DCS_DL_ch, PCS=GSM_PCS_DL_ch}
+GSM_Band_DL_ch_map = dict(EGSM=GSM_EGSM_DL_ch, GSM850=GSM_GSM850_DL_ch, DCS=GSM_DCS_DL_ch, PCS=GSM_PCS_DL_ch)
 GSM_Band_UL_ch_map = GSM_Band_DL_ch_map
 
 					
