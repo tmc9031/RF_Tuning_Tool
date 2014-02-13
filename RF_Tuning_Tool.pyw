@@ -204,13 +204,25 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			"""
 			# Set variable values
 			self.test_band = band
-			self.UL_ch = GSM_Band_UL_ch_map[self.test_band][1]
+			self.UL_ch = GSM_Band_UL_ch_map[self.test_band][0]
+			
+			#Callbox setting
 			#preset instrument
 			self.callbox.preset()
 			self.callbox.update_path_loss()
 			# Set FDD test mode
 			self.callbox.set_FDD_test_mode()
+			# Set band and channel
+			self.callbox.set_GSM_band(self.test_band)	#GSM needs to set band before channel, LTE and WCDMA is not needed in FDD test mode
+			self.callbox.set_GSM_channel(self.UL_ch)
+			self.displayChannel()
+			# Setup TxP setting
+			self.callbox.set_GSM_power_mea()
 			
+			# Phone setting
+			self.eModeId = FTM_MODE_ID_GSM
+			self.eNewMode = GSM_Band_QMSL_map[self.test_band]
+			self.set_phone_GSM_on()
 			
 		
 		# measure one time
@@ -223,44 +235,67 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 	
 	def startSweep(self):
 		print("Start Sweep")
+		if self.comboBoxTech.currentText() == "GSM":
+			self.GSMSweep()
+		else: 
+			ch_list = []
+			if self.comboBoxTech.currentText() == "LTE":
+				ch_list = LTE_Band_UL_ch_map_5M[self.test_band]
+			elif self.comboBoxTech.currentText() == "WCDMA":
+				ch_list = Band_UL_ch_map[self.test_band]
+			
+			PDM_start = 0
+			PDM_end = 0
+			if self.spinBoxPDMStart.value() > self.spinBoxPDMEnd.value():
+				PDM_start = self.spinBoxPDMEnd.value()
+				PDM_end = self.spinBoxPDMStart.value()
+			else:
+				PDM_start = self.spinBoxPDMStart.value()
+				PDM_end = self.spinBoxPDMEnd.value()
+			
+			for ch in ch_list:
+				self.UL_ch = ch
+				self.phone.set_Tx_off()	# Set Tx OFF
+				self.tx_on_flag = 0
+				self.btnTxOff.setChecked(True)
+				self.callbox.set_FDD_UL_channel(self.UL_ch)		# Set instrument to new channel
+				if self.comboBoxTech.currentText() == "LTE":
+					self.set_phone_LTE_on()
+				elif self.comboBoxTech.currentText() == "WCDMA":
+					self.set_phone_WCDMA_on()
+				self.btnTxOn.setChecked(True)
+				# Set SMPS
+				self.set_SMPS()
+				for PDM_sweep in range(PDM_start, PDM_end+1, 1):
+					self.PDM = PDM_sweep
+					if self.comboBoxTech.currentText() == "LTE":
+						self.phone.set_LTE_PDM(self.PDM)
+					elif self.comboBoxTech.currentText() == "WCDMA":
+						self.phone.set_PDM(self.PDM)
+					self.qlPDM.setText(unicode(self.PDM))
+					self.measure()
+					self.print_result()
+	
+	def GSMSweep(self):
 		ch_list = []
-		if self.comboBoxTech.currentText() == "LTE":
-			ch_list = LTE_Band_UL_ch_map_5M[self.test_band]
-		elif self.comboBoxTech.currentText() == "WCDMA":
-			ch_list = Band_UL_ch_map[self.test_band]
-		
-		PDM_start = 0
-		PDM_end = 0
-		if self.spinBoxPDMStart.value() > self.spinBoxPDMEnd.value():
-			PDM_start = self.spinBoxPDMEnd.value()
-			PDM_end = self.spinBoxPDMStart.value()
-		else:
-			PDM_start = self.spinBoxPDMStart.value()
-			PDM_end = self.spinBoxPDMEnd.value()
-		
+		txp_list = []
+		ch_list = GSM_Band_UL_ch_map[self.test_band]
 		for ch in ch_list:
 			self.UL_ch = ch
 			self.phone.set_Tx_off()	# Set Tx OFF
 			self.tx_on_flag = 0
 			self.btnTxOff.setChecked(True)
-			self.callbox.set_FDD_UL_channel(self.UL_ch)		# Set instrument to new channel
-			if self.comboBoxTech.currentText() == "LTE":
-				self.set_phone_LTE_on()
-			elif self.comboBoxTech.currentText() == "WCDMA":
-				self.set_phone_WCDMA_on()
+			#Set callbox channel
+			self.callbox.set_GSM_channel(self.UL_ch)
+			self.displayChannel()
+						
+			#Set phone
+			self.set_phone_GSM_on()
+			
 			self.btnTxOn.setChecked(True)
-			# Set SMPS
-			self.set_SMPS()
-			for PDM_sweep in range(PDM_start, PDM_end+1, 1):
-				self.PDM = PDM_sweep
-				if self.comboBoxTech.currentText() == "LTE":
-					self.phone.set_LTE_PDM(self.PDM)
-				elif self.comboBoxTech.currentText() == "WCDMA":
-					self.phone.set_PDM(self.PDM)
-				self.qlPDM.setText(unicode(self.PDM))
-				self.measure()
-				self.print_result()
-		
+			self.measure()
+			self.print_result()
+			
 	def setHPM(self):
 		print("set HPM")
 		
@@ -312,6 +347,8 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.set_phone_LTE_on()
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			self.set_phone_WCDMA_on()
+		elif self.comboBoxTech.currentText() == "GSM":
+			self.set_phone_GSM_on()
 		self.qlPDM.setText(unicode(self.PDM))
 		# Set SMPS
 		self.set_SMPS()
@@ -386,6 +423,17 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.qlPDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
+		elif self.comboBoxTech.currentText() == "GSM":
+			i = GSM_Band_UL_ch_map[self.test_band].index(self.UL_ch)
+			if (i<2):
+				i += 1
+				self.UL_ch = GSM_Band_UL_ch_map[self.test_band][i]
+			# Set Phone on again
+			self.phone.set_Tx_off()	# Set Tx OFF
+			self.tx_on_flag = 0
+			self.btnTxOff.setChecked(True)
+			self.callbox.set_GSM_channel(self.UL_ch)		# Set instrument to new channel
+			self.set_phone_GSM_on()
 		self.displayChannel()
 		self.measure()
 		self.print_result()
@@ -422,6 +470,17 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.qlPDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
+		elif self.comboBoxTech.currentText() == "GSM":
+			i = GSM_Band_UL_ch_map[self.test_band].index(self.UL_ch)
+			if (i>0):
+				i -= 1
+				self.UL_ch = GSM_Band_UL_ch_map[self.test_band][i]
+			# Set Phone on again
+			self.phone.set_Tx_off()	# Set Tx OFF
+			self.tx_on_flag = 0
+			self.btnTxOff.setChecked(True)
+			self.callbox.set_GSM_channel(self.UL_ch)		# Set instrument to new channel
+			self.set_phone_GSM_on()
 		self.displayChannel()
 		self.measure()
 		self.print_result()
@@ -474,6 +533,24 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 		# Set PDM
 		self.phone.set_PDM(self.PDM)
 		
+	def set_phone_GSM_on(self):
+		print("set phone GSM on")
+		
+		# Set band/mode
+		self.phone.set_band(self.eModeId, self.eNewMode)
+		# Set  GSM Tx burst
+		self.phone.set_GSM_Tx_burst()
+		# Set Channel
+		self.phone.set_channel(self.UL_ch)
+		# Set TCXO Adj PDM = 0
+		self.phone.set_TCXO_Adj_PDM()
+		#Set Tx ON
+		self.phone.set_Tx_ON()
+		# Set PA range
+		self.phone.set_GSM_Linear_PA_range()
+		# Set RGI
+		self.phone.set_GSM_Linear_RGI()
+	
 	
 	def measure(self):
 		print("measure")
@@ -492,6 +569,11 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.txp = self.callbox.read_TXP()
 			#read ACLR
 			self.aclr = self.callbox.read_ACLR()
+		elif self.comboBoxTech.currentText() == "GSM":
+			# Sweep for GSM
+			self.callbox.init_GSM_power()
+			#read tx power
+			self.txp = self.read_GSM_power()
 		
 		
 	def print_message(self, param):
@@ -564,6 +646,19 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.tableWidget.setItem((self.current_edit_row), 2, itemPDM)
 			self.tableWidget.setItem((self.current_edit_row), 6, itemAclrUTRAM)
 			self.tableWidget.setItem((self.current_edit_row), 7, itemAclrUTRAP)
+			
+		elif self.comboBoxTech.currentText() == "GSM":
+			print("current row: {0}".format(self.current_edit_row))
+			print("row count: {0}".format(self.tableWidget.rowCount()))
+			if (self.current_edit_row == self.tableWidget.rowCount()):
+				self.tableWidget.setRowCount(self.tableWidget.rowCount()+1)
+			self.tableWidget.setCurrentCell(self.current_edit_row, 0)
+			
+			itemULCh = QTableWidgetItem(unicode(self.UL_ch))
+			itemTxp = QTableWidgetItem("{0:.2f}".format(self.txp))
+			
+			self.tableWidget.setItem((self.current_edit_row), 0, itemULCh)
+			self.tableWidget.setItem((self.current_edit_row), 1, itemTxp)
 	
 	def displayChannel(self):
 		if self.comboBoxTech.currentText() == "LTE":
@@ -574,6 +669,9 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			i = Band_UL_ch_map[self.test_band].index(self.UL_ch)
 			self.qlULch.setText(unicode(self.UL_ch))
 			self.qlDLch.setText(unicode(Band_DL_ch_map[self.test_band][i]))
+		elif self.comboBoxTech.currentText() == "GSM":
+			self.qlULch.setText(unicode(self.UL_ch))
+			self.qlDLch.setText(unicode(self.UL_ch))	#GSM UL and DL is the same channel
 	
 	def copySelectCells(self):
 		print("copy")
