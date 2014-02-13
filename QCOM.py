@@ -329,14 +329,13 @@ class QCOM_phone:
 		if (bool(bOK) == False): 
 			print("Set GSM TCXO Adj PDM {0}: {1}".format(iPDMvalue, pass_dict[bool(bOK)]))
 			
-	def set_GSM_Linear_PA_range(self):
+	def set_GSM_Linear_PA_range(self, iPaRange = 0):
 		"""
 			Set GSM Linear PA range
 			Slot: 0
 			Range: 0
 		"""
 		iSlotNum = 0
-		iPaRange = 0
 		bOK = self.qdll.QLIB_FTM_SET_GSM_LINEAR_PA_RANGE( self.g_hResourceContext, iSlotNum, iPaRange)
 		if (bool(bOK) == False): 
 			print("Set GSM Linear PA range: {0}".format(pass_dict[bool(bOK)]))
