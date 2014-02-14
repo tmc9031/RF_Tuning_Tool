@@ -132,8 +132,19 @@ class Agilent8960(Instrument):
 		self.write("CALL:OPER:MODE CALL")	#CALL|CW|FDDT|OFF
 	
 	def set_FDD_test_mode(self):
-		# Set 8960 to FDD test mode
-		self.write("CALL:OPER:MODE FDDT")	#CALL|CW|FDDT|OFF
+		"""
+			GSM: BCH+TCH mode
+			WCDMA: FDD Test mode
+		"""
+		s = self.ask("SYST:APPL:FORMat?")	#WCDMA|GSM/GPRS
+		if s == "\"GSM/GPRS\"":
+			# Set 8960 to GSM BCH+TCH test mode
+			self.write("CALL:OPER:MODE GBTTest")
+		elif s == "\"WCDMA\"":
+			# Set 8960 to FDD test mode for WCDMA
+			self.write("CALL:OPER:MODE FDDT")	#CALL|CW|FDDT|OFF
+		else:
+			print("Set FDD test mode fail")
 	
 	def set_FDD_UL_channel(self, UL_ch):
 		"""
@@ -449,6 +460,75 @@ class Agilent8960(Instrument):
 			self.handover_to_DL_ch(DL_ch)	#handover
 			sens = self.BER_search(count, start, step, target)
 			print("{0:^8d}, {1:^18,.1f}".format(DL_ch, sens))
+		
+	def set_GSM_channel(self, ch):
+		"""
+			Set GSM channel
+			GSM TCH setting need to be verified with two kinds of command
+			CALL:TCHannel[:ARFCn][:SELected]
+			CALL:TCHannel[:ARFCn]:(DCS|EGSM|GSM450|GSM480|GSM750|GSM850|PCS|PGSM|RGSM|TGSM810) 
+		"""
+		s = "CALL:TCH "+str(ch)	# set UL ch
+		self.write(s)
+		
+	def set_GSM_band(self, band):
+		"""
+			Set GSM TCH band
+			CALL:TCHannel:BAND
+			Range: PGSM | DCS | EGSM | GSM450 | GSM480 | GSM750 | GSM850 | PCS | RGSM | TGSM810
+			Set Band Indicator
+			CALL[:CELL]:BINDicator
+			Range: DCS | PCS
+		"""
+		if band == "EGSM":
+			self.write("CALL:TCH:BAND EGSM")
+		elif band == "GSM850":
+			self.write("CALL:TCH:BAND GSM850")
+		elif band == "DCS":
+			self.write("CALL:TCH:BAND DCS")
+			self.write("CALL:BIND DCS")	#Set band indicator to DCS
+		elif band == "PCS":
+			self.write("CALL:TCH:BAND PCS")
+			self.write("CALL:BIND PCS")	#Set band indicator to PCS
+
+	def set_GSM_power_mea(self, count = 20):
+		"""
+			GSM Tx power measurement setting
+			count: measure count
+		"""
+		self.write("SET:TXP:CONTI OFF")
+		s = "SET:TXP:COUN:NUMB "+str(count)	# set measure counts
+		self.write(s)
+		self.write("SETup:TXPower:TRIGger:SOURce AUTO")	# Trigger source: AUTO
+		self.write("CALL:SETup:TCH:MS:TXLevel 0")	# Set PCL0 for QB
+	
+	def set_GSM_FTM_power_mea_continuous(self):
+		# This command is for Anritsu8820C only
+		# Set GSM COMMON->Measuring Object->Continuous for tuning
+		#self.write("MEASOBJ CONT")
+		s=1
+	
+	def init_GSM_power(self):
+		self.write("INIT:TXP")
+		
+	def read_GSM_power(self):
+		"""
+			read channel power measurement
+			if integrity is fail, return tx power and print error message
+			if integrity is ok, return tx power in Decimal()
+		"""
+		#read tx power
+		s = self.ask("FETC:TXP:ALL?")
+		s = s.split(",")
+		Integrity = int(s[0])
+		Txp = Decimal(s[1])
+		if not Integrity:
+			#print("Integrity ok")
+			#print("Tx Power:"+str(Txp))
+			return Txp
+		else:
+			print("Tx Power integrity fail: "+str(Integrity))
+			return Txp		
 		
 if __name__ == "__main__":
 	
