@@ -2,6 +2,8 @@
 # for instrument/phone setting
 # William Chang
 
+#Test for git
+
 #Instrument setting
 Instrument_GPIB = 14		#GPIB
 Average_times = 20		# average times for Txp and ACLR measurement
