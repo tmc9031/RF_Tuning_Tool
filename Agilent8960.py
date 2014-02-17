@@ -504,8 +504,6 @@ class Agilent8960(Instrument):
 	
 	def set_GSM_FTM_power_mea_continuous(self):
 		# This command is for Anritsu8820C only
-		# Set GSM COMMON->Measuring Object->Continuous for tuning
-		#self.write("MEASOBJ CONT")
 		s=1
 	
 	def init_GSM_power(self):
