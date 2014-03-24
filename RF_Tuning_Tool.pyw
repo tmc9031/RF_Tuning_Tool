@@ -222,7 +222,7 @@ class MainDialog(QDialog, mainGui.Ui_mainDialog):
 			self.displayChannel()
 			# Setup TxP setting
 			self.callbox.set_GSM_power_mea()
-			self.callbox.set_GSM_FTM_power_mea_continuous()
+			self.callbox.set_GSM_TSC()
 			
 			# Phone setting
 			self.eModeId = FTM_MODE_ID_GSM

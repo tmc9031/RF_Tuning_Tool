@@ -486,9 +486,9 @@ class Anritsu8820C(Instrument):
 		self.write("ILVLCTRL MANUAL")	#Set input level according to Manual
 		self.write("ILVL 34")			#Set input level 34dBm, may change after test
 	
-	def set_GSM_FTM_power_mea_continuous(self):
-		# Set GSM COMMON->Measuring Object->Continuous for tuning
-		self.write("MEASOBJ CONT")
+	def set_GSM_TSC(self):
+		# Set GSM COMMON -> Signal -> TS: TSC5 for tuning
+		self.write("TSPAT TSC5")
 	
 	def init_GSM_power(self):
 		self.write("SWP")

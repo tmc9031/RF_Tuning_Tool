@@ -502,7 +502,7 @@ class Agilent8960(Instrument):
 		self.write("SETup:TXPower:TRIGger:SOURce AUTO")	# Trigger source: AUTO
 		self.write("CALL:MS:TXL 0")	# Set PCL0 for QB
 	
-	def set_GSM_FTM_power_mea_continuous(self):
+	def set_GSM_set_GSM_TSC(self):
 		# This command is for Anritsu8820C only
 		s=1
 	
