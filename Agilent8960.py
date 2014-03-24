@@ -502,9 +502,12 @@ class Agilent8960(Instrument):
 		self.write("SETup:TXPower:TRIGger:SOURce AUTO")	# Trigger source: AUTO
 		self.write("CALL:MS:TXL 0")	# Set PCL0 for QB
 	
-	def set_GSM_set_GSM_TSC(self):
+	def set_GSM_TSC(self):
 		# This command is for Anritsu8820C only
-		s=1
+		# Agilent 8960 default: AS_BCC
+		# Measured value difference < 0.1dB
+		self.write("CALL:SETup:TCHannel:TSCode TSC5")
+		
 	
 	def init_GSM_power(self):
 		self.write("INIT:TXP")
