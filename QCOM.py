@@ -133,6 +133,13 @@ class QCOM_phone:
 			print("Is FTM Mode: {0}".format(truth_dict[bool(bFTMMode)]))
 		else:
 			print("Is FTM Mode function fail")
+		# Set Calibration State for latest device
+		self.set_calibration_state()
+	
+	def set_calibration_state(self):
+		# Set Calibration state for latest device
+		bOK = self.qdll.QLIB_FTM_SET_CALIBRATION_STATE(self.g_hResourceContext,1)   
+
 	
 	def set_band(self, eModeId, eNewMode):	
 		"""
