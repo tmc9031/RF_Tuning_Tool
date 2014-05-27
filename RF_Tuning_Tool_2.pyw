@@ -40,6 +40,10 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 	eModeId = None
 	eNewMode = None
 	
+	MIPI_ch = None
+	MIPI_slave_ID = None	
+	ICQ_value = None
+	
 	# for tableWidget
 	current_edit_row = -1
 	
@@ -81,9 +85,19 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.btnSetGPIB.clicked.connect(self.setupInstrument)
 		
 		# Get available phone list, then update to Phone COM comboBox
+		self.btnGetCOM.clicked.connect(self.getPhoneCOM)
+		self.comboBoxCOM.activated[unicode].connect(self.setupPhone)
 		
 		self.qlePDM.setText(unicode(self.PDM))
 		self.qleSMPS.setText(unicode(self.SMPS_value))
+		
+		# MIPI init
+		self.qcbMIPICh.addItems(["0", "1"])
+		self.btnSetMIPISlaveID.clicked.connect(self.setMIPISlaveID)
+		
+		# btnSetPDM signal
+		self.btnSetPDM.clicked.connect(self.setPDM)
+		
 		
 		# Setup instrument and phone
 		#self.setupInstrument()
@@ -109,39 +123,58 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			
 			self.callbox.timeout = 10
 		except:
-			self.print_message("Callbox error! Please Check GPIB Address.", error=True)
-			
+			self.print_message("Callbox error! Please Check GPIB Address.", bError=True)
 	
-	def setupPhone(self):
+	def getPhoneCOM(self):
+		"""
+			Get phone COM port 
+		"""
+		self.print_message("Get Phone COM port")
 		try:
-			self.print_message("Setup Phone")
-			self.qlCOM.setText(unicode(Phone_Com_Port))
 			# initial phone
 			self.phone = QCOM_phone()
 			self.phone.initial_QMSL(bUseQPST)
-			Phone_Com_Port_c = c_int(Phone_Com_Port)
-			self.phone.connect_phone(Phone_Com_Port_c)
-			self.phone.set_online_mode()
-			self.phone.set_FTM_mode()
+			phoneList = self.phone.get_phone_port_list()
+			if (len(phoneList) != 0):
+				self.comboBoxCOM.addItem("Disconnect")
+				for i in phoneList:
+					self.comboBoxCOM.addItem("COM{0}".format(i))
+			else:
+				self.print_message("Cannot get Phone COM port", bError=True)
 		except:
-			print("phone error")
+			self.print_message("Cannot get Phone COM port", bError=True)
+	
+	def setupPhone(self, COM_port):
+		try:
+			if (COM_port == "Disconnect"):
+				self.phone.disconnect()
+			else:
+				Phone_Com_Port = int(COM_Port[3:])
+				self.phone.connect_phone(Phone_Com_Port)
+				self.phone.set_online_mode()
+				self.phone.set_FTM_mode()
+		except:
+			self.print_message("Set FTM mode error", bError=True)
 			
 	def comboBoxTechSelected(self, tech):
-		if tech == "LTE":
-			self.comboBoxBand.clear()
-			self.comboBoxBand.addItems(sorted(LTE_Band_QMSL_map.keys(), key=lambda x: int(x[1:])))
-			self.qlBW.setText("5MHz")
-		elif tech == "WCDMA":
-			self.comboBoxBand.clear()
-			self.comboBoxBand.addItems(sorted(Band_QMSL_map.keys(), key=lambda x: int(x[1:])))
-			self.qlBW.setText("--")
-		elif tech == "GSM":
-			self.comboBoxBand.clear()
-			self.comboBoxBand.addItems(sorted(GSM_Band_QMSL_map.keys()))
-			self.qlBW.setText("--")
+		if ((self.phone is None) or (self.callbox is None)):
+			self.print_message("Please set callbox and phone ready first.", bError=True)
 		else:
-			QMessageBox.warning(self, "Error", "comboBoxTech Error")
-		self.print_title()
+			if tech == "LTE":
+				self.comboBoxBand.clear()
+				self.comboBoxBand.addItems(sorted(LTE_Band_QMSL_map.keys(), key=lambda x: int(x[1:])))
+				self.qlBW.setText("5MHz")
+			elif tech == "WCDMA":
+				self.comboBoxBand.clear()
+				self.comboBoxBand.addItems(sorted(Band_QMSL_map.keys(), key=lambda x: int(x[1:])))
+				self.qlBW.setText("--")
+			elif tech == "GSM":
+				self.comboBoxBand.clear()
+				self.comboBoxBand.addItems(sorted(GSM_Band_QMSL_map.keys()))
+				self.qlBW.setText("--")
+			else:
+				QMessageBox.warning(self, "Error", "comboBoxTech Error")
+			self.print_title()
 	
 	def comboBoxBandSelected(self, band):
 		#print("Band selected, need to setup display and start first measurement")
@@ -255,6 +288,26 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		#self.print_title()
 		self.print_result()
 	
+	def setMIPISlaveID(self):
+		"""
+			Set MIPI channel and Slave ID
+			Read ICQ value of selected PA
+		"""
+		self.MIPI_ch = int(self.qcbMIPICh.currentText())
+		self.MIPI_slave_ID = self.qleMIPIAddr.text()
+		self.readICQ()
+		if not(self.ICQ_value is None):
+			qleICQ.setText(unicode(self.ICQ_value))
+	
+	def readICQ(self):
+		if not(MIPI_slave_ID is None):
+			value = self.phone.RFFE_readwrite(Read=True, SlaveID=self.MIPI_slave_ID, Address='1', Data=None, ExtMode=False, iChannel=self.MIPI_ch, HalfSpeed=False)
+			if not(value is None):
+				self.ICQ_value = value
+			else:
+				self.print_message("return value of readICQ is None", bError = True)
+		else:
+			self.print_message("MIPI_slave_ID is None in readICQ", bError = True)
 	
 	def startSweep(self):
 		print("Start Sweep")
@@ -412,7 +465,22 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.qlPDM.setText(unicode(self.PDM))
 		self.measure()
 		self.print_result()
+	
+	def setPDM(self):
+		print("set PDM")
 		
+		pdm = int(self.qlePDM.text())
+		if ((pdm >= PDM_min) and (pdm <= PDM_max)):
+			self.PDM = pdm
+			if self.comboBoxTech.currentText() == "LTE":
+				self.phone.set_LTE_PDM(self.PDM)
+			elif self.comboBoxTech.currentText() == "WCDMA":
+				self.phone.set_PDM(self.PDM)
+			self.qlPDM.setText(unicode(self.PDM))
+			self.measure()
+			self.print_result()
+		else:
+			self.print_message("PDM value error", bError = True)
 		
 	def increaseChannel(self):
 		print("increase channel")
@@ -511,8 +579,9 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		
 	def set_SMPS(self):
 		self.phone.set_PA_BIAS_override(self.SMPS_ON)	# Set SMPS override ON
+		self.SMPS_value = int(self.qleSMPS.text())
 		self.phone.set_PA_BIAS_value(self.SMPS_value)
-		self.qleSMPS.setText(unicode(self.SMPS_value))
+		#self.qleSMPS.setText(unicode(self.SMPS_value))
 		
 	def set_phone_LTE_on(self):
 		print("seet_phone_lte_on")
@@ -599,8 +668,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.txp = self.callbox.read_GSM_power()
 		
 		
-	def print_message(self, param, error=False):
-		if (error):
+	def print_message(self, param, bError=False):
+		if (bError):
 			self.qlMessage.setStyleSheet("QLabel {color : red; }")
 		else:
 			self.qlMessage.setStyleSheet("QLabel {color : blue; }")
@@ -612,10 +681,10 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		print("print title")
 		#print title 
 		if self.comboBoxTech.currentText() == "LTE":
-			self.tableWidget.setHorizontalHeaderLabels(["channel", "Tx Power", "PDM", "Max curr", "min curr", "Current", "UTRA-1", "UTRA+1", "EUTRA-1", "EURTA+1"])
+			self.tableWidget.setHorizontalHeaderLabels(["channel", "Tx Power", "PDM", "Max curr", "min curr", "Current", "UTRA-1", "UTRA+1", "EUTRA-1", "EURTA+1", "SMPS", "ICQ"])
 			#self.textBrowser.append("{0:7}, {1:8}, {2:4}, {3:7}, {4:7}, {5:7}, {6:7}, {7:7}, {8:7}".format("channel", "Tx Power", "PDM", "UTRA-1", "UTRA+1", "EUTRA-1", "EURTA+1", "PArange", "SMPS"))
 		elif self.comboBoxTech.currentText() == "WCDMA":
-			self.tableWidget.setHorizontalHeaderLabels(["channel", "Tx Power", "PDM", "Max curr", "min curr", "Current","-5MHz", "+5MHz", "", ""])
+			self.tableWidget.setHorizontalHeaderLabels(["channel", "Tx Power", "PDM", "Max curr", "min curr", "Current","-5MHz", "+5MHz", "SMPS", "ICQ", "", ""])
 			#self.textBrowser.append("{0:8}, {1:8}, {2:4}, {3:6}, {4:6}, {5:7}, {6:7}".format("channel", "Tx Power", "PDM", "-5MHz", "+5MHz", "PArange", "SMPS"))
 			
 	def print_result(self):
@@ -641,6 +710,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			itemAclrUTRAP = QTableWidgetItem("{0:.2f}".format(self.aclr[3]))
 			itemAclrEUTRAM = QTableWidgetItem("{0:.2f}".format(self.aclr[0]))
 			itemAclrEUTRAP = QTableWidgetItem("{0:.2f}".format(self.aclr[1]))
+			itemSMPS = QTableWidgetItem(unicode(self.SMPS_value))
 			
 			self.tableWidget.setItem((self.current_edit_row), 0, itemULCh)
 			self.tableWidget.setItem((self.current_edit_row), 1, itemTxp)
@@ -649,6 +719,11 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.tableWidget.setItem((self.current_edit_row), 7, itemAclrUTRAP)
 			self.tableWidget.setItem((self.current_edit_row), 8, itemAclrEUTRAM)
 			self.tableWidget.setItem((self.current_edit_row), 9, itemAclrEUTRAP)
+			self.tableWidget.setItem((self.current_edit_row), 10, itemSMPS)
+			
+			if not(self.ICQ_value is None):
+				itemICQ = QTableWidgetItem(unicode(self.ICQ_value))
+				self.tableWidget.setItem((self.current_edit_row), 11, itemICQ)
 			
 			
 		elif self.comboBoxTech.currentText() == "WCDMA":
@@ -669,12 +744,18 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			itemPDM = QTableWidgetItem(unicode(self.PDM))
 			itemAclrUTRAM = QTableWidgetItem("{0:.2f}".format(self.aclr[0]))
 			itemAclrUTRAP = QTableWidgetItem("{0:.2f}".format(self.aclr[1]))
+			itemSMPS = QTableWidgetItem(unicode(self.SMPS_value))
 			
 			self.tableWidget.setItem((self.current_edit_row), 0, itemULCh)
 			self.tableWidget.setItem((self.current_edit_row), 1, itemTxp)
 			self.tableWidget.setItem((self.current_edit_row), 2, itemPDM)
 			self.tableWidget.setItem((self.current_edit_row), 6, itemAclrUTRAM)
 			self.tableWidget.setItem((self.current_edit_row), 7, itemAclrUTRAP)
+			self.tableWidget.setItem((self.current_edit_row), 8, itemSMPS)
+			
+			if not(self.ICQ_value is None):
+				itemICQ = QTableWidgetItem(unicode(self.ICQ_value))
+				self.tableWidget.setItem((self.current_edit_row), 9, itemICQ)
 			
 		elif self.comboBoxTech.currentText() == "GSM":
 			print("current row: {0}".format(self.current_edit_row))
