@@ -77,8 +77,13 @@ class QCOM_phone:
 		
 		return PhoneList
 
-	def connect_phone(self, iComPort):
+	def connect_phone(self, ComPort):
 		#iComPort = c_uint(40)	# move to WCDMA_attributes
+		if (type(ComPort)== int):
+			iComPort = c_uint(ComPort)
+		else:
+			iComPort = ComPort
+			
 		self.qdll.QLIB_ConnectServerWithWait.restype = c_void_p
 		self.qdll.QLIB_ConnectServer.restype = c_void_p
 		self.g_hResourceContext = self.qdll.QLIB_ConnectServerWithWait(iComPort)
@@ -383,6 +388,46 @@ class QCOM_phone:
 			print("Set GSM Linear RGI {0}: {1}".format(iRgiIndex, pass_dict[bool(bOK)]))
 
 	
+	def RFFE_readwrite(self, Read, SlaveID, Address, Data=None, ExtMode=False, iChannel=0, HalfSpeed=False):
+		"""
+			Wrap QLIB_FTM_RFFE_READWRITE_CMD function
+			Read(bool): True->Read, False->Write
+			SlaveID: 
+			ExtMode(bool): True->Extended, False->Non-extended
+			iChannel(int): 0/1
+			HalfSpeed(bool): True-> Half-speed, False-> Full-speed
+		"""
+		iExtMode = int(ExtMode)
+		iReadWrite = int(Read)
+		#iChannel = c_char(Channel)
+		iSlave = c_char(SlaveID)
+		# Convert address from hex to int to c_ushort
+		iAddress = c_ushort(int(Address, 16))
+		# Check Data
+		if Data is None:
+			iData = c_char()
+		else:
+			iData = c_char(Data)
+		iData = c_int()
+		iHalfSpeed = int(HalfSpeed)
+		
+		print("before")
+		print(iData)
+
+		# self.qdll.QLIB_FTM_RFFE_READWRITE_CMD( self.g_hResourceContext, iExtMode, iReadWrite, iChannel, iSlave, iAddress, byref(iData), iHalfSpeed)
+		
+		self.qdll.QLIB_FTM_RFFE_READWRITE_CMD( self.g_hResourceContext, 0, 1, 0, c_int(12), c_int(29), byref(iData), 0)
+		
+		print("after")
+		print(iData)
+		print(iData.value)
+		bOk = True
+		if bool(bOk):
+			return iData.value
+		else:
+			return None
+
+	
 if __name__ == "__main__":
 	
 	phone = QCOM_phone()
@@ -391,6 +436,21 @@ if __name__ == "__main__":
 	pl = phone.get_phone_port_list()
 	for i in pl: print(i)
 	
+	phone.connect_phone(pl[0])
+	"""
+	phone.set_FTM_mode()
+	
+	#set mode/band
+	eModeId = FTM_MODE_ID_WCDMA
+	eNewMode = PHONE_MODE_WCDMA_IMT
+	#eModeId = FTM_MODE_ID_LTE
+	#eNewMode = PHONE_MODE_LTE_B7
+	phone.set_band(eModeId, eNewMode)
+	"""
+	a = phone.RFFE_readwrite(Read=True, SlaveID="c", Address="1D")
+	print(a)
+	
+	phone.disconnect()
 	"""
 	phone.connect_phone(Phone_Com_Port)
 	
