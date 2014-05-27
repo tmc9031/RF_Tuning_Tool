@@ -391,39 +391,43 @@ class QCOM_phone:
 	def RFFE_readwrite(self, Read, SlaveID, Address, Data=None, ExtMode=False, iChannel=0, HalfSpeed=False):
 		"""
 			Wrap QLIB_FTM_RFFE_READWRITE_CMD function
-			Read(bool): True->Read, False->Write
-			SlaveID: 
-			ExtMode(bool): True->Extended, False->Non-extended
-			iChannel(int): 0/1
-			HalfSpeed(bool): True-> Half-speed, False-> Full-speed
+			Parameters:
+				Read(bool): True->Read, False->Write
+				SlaveID(str): HEX(1~F)
+				Address(str): HEX
+				Data(str): in/out HEX
+				ExtMode(bool): True->Extended, False->Non-extended
+				iChannel(int): 0/1
+				HalfSpeed(bool): True-> Half-speed, False-> Full-speed
+			Return:
+				Data in HEX string
+				None if failed
 		"""
 		iExtMode = int(ExtMode)
 		iReadWrite = int(Read)
-		#iChannel = c_char(Channel)
-		iSlave = c_char(SlaveID)
-		# Convert address from hex to int to c_ushort
-		iAddress = c_ushort(int(Address, 16))
+		iSlave = c_int(int(SlaveID,16))
+		# Convert address from hex to int to c_int
+		iAddress = c_int(int(Address, 16))
 		# Check Data
 		if Data is None:
-			iData = c_char()
+			iData = c_int()
 		else:
-			iData = c_char(Data)
-		iData = c_int()
+			iData = c_int(int(Data,16))
 		iHalfSpeed = int(HalfSpeed)
 		
 		print("before")
 		print(iData)
 
-		# self.qdll.QLIB_FTM_RFFE_READWRITE_CMD( self.g_hResourceContext, iExtMode, iReadWrite, iChannel, iSlave, iAddress, byref(iData), iHalfSpeed)
+		# QLIB_FTM_RFFE_READWRITE_CMD( hResourceContext, iExtMode, iReadWrite, iChannel, iSlave, iAddress, byref(iData), iHalfSpeed)
 		
-		self.qdll.QLIB_FTM_RFFE_READWRITE_CMD( self.g_hResourceContext, 0, 1, 0, c_int(12), c_int(29), byref(iData), 0)
+		self.qdll.QLIB_FTM_RFFE_READWRITE_CMD( self.g_hResourceContext, iExtMode, iReadWrite, iChannel, iSlave, iAddress, byref(iData), iHalfSpeed)
 		
 		print("after")
 		print(iData)
 		print(iData.value)
 		bOk = True
 		if bool(bOk):
-			return iData.value
+			return hex(iData.value)[2:]
 		else:
 			return None
 
@@ -449,6 +453,7 @@ if __name__ == "__main__":
 	"""
 	a = phone.RFFE_readwrite(Read=True, SlaveID="c", Address="1D")
 	print(a)
+	print(type(a))
 	
 	phone.disconnect()
 	"""
