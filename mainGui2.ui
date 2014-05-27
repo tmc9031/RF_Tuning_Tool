@@ -423,7 +423,7 @@ font: 12pt &quot;Calibri&quot;;
    <widget class="QToolButton" name="btnChMinus">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>590</x>
       <y>500</y>
       <width>61</width>
       <height>61</height>
@@ -452,7 +452,7 @@ font: 12pt &quot;Calibri&quot;;
    <widget class="QToolButton" name="btnPDMPlus">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>660</x>
       <y>460</y>
       <width>61</width>
       <height>61</height>
@@ -481,7 +481,7 @@ font: 12pt &quot;Calibri&quot;;
    <widget class="QToolButton" name="btnChPlus">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>730</x>
       <y>500</y>
       <width>61</width>
       <height>61</height>
@@ -510,7 +510,7 @@ font: 12pt &quot;Calibri&quot;;
    <widget class="QToolButton" name="btnPDMMinus">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>660</x>
       <y>540</y>
       <width>61</width>
       <height>61</height>
@@ -562,19 +562,6 @@ font: 12pt &quot;Calibri&quot;;
      </property>
      <property name="text">
       <string>Callbox GPIB</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="qlCOMTitle">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>90</y>
-       <width>81</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Phone COM</string>
      </property>
     </widget>
     <widget class="QLabel" name="qlGPIBTitle_2">
@@ -666,106 +653,37 @@ font: 12pt &quot;Calibri&quot;;
       <string>Set</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="qleCOM">
+    <widget class="QToolButton" name="btnGetCOM">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Phone COM</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBoxCOM">
      <property name="geometry">
       <rect>
        <x>110</x>
        <y>90</y>
-       <width>41</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="inputMethodHints">
-      <set>Qt::ImhNone</set>
-     </property>
-     <property name="inputMask">
-      <string>000; </string>
-     </property>
-     <property name="text">
-      <string>25</string>
-     </property>
-     <property name="maxLength">
-      <number>3</number>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-    <widget class="QToolButton" name="btnSetCOM">
-     <property name="geometry">
-      <rect>
-       <x>160</x>
-       <y>90</y>
-       <width>41</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Set</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QFrame" name="frame_2">
-    <property name="geometry">
-     <rect>
-      <x>320</x>
-      <y>470</y>
-      <width>71</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <widget class="QToolButton" name="btnHPM">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>51</width>
+       <width>91</width>
        <height>31</height>
       </rect>
-     </property>
-     <property name="text">
-      <string>HPM</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="autoExclusive">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QToolButton" name="btnLPM">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>51</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>LPM</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="autoExclusive">
-      <bool>true</bool>
      </property>
     </widget>
    </widget>
    <widget class="QFrame" name="frame_3">
     <property name="geometry">
      <rect>
-      <x>240</x>
-      <y>470</y>
-      <width>81</width>
-      <height>111</height>
+      <x>250</x>
+      <y>460</y>
+      <width>131</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -777,8 +695,8 @@ font: 12pt &quot;Calibri&quot;;
     <widget class="QToolButton" name="btnTxOff">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>60</y>
+       <x>70</x>
+       <y>0</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -796,8 +714,8 @@ font: 12pt &quot;Calibri&quot;;
     <widget class="QToolButton" name="btnTxOn">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>20</y>
+       <x>0</x>
+       <y>0</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -945,9 +863,9 @@ background-color: rgb(225, 225, 225);</string>
     <property name="geometry">
      <rect>
       <x>800</x>
-      <y>460</y>
+      <y>450</y>
       <width>101</width>
-      <height>141</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="font">
@@ -1021,9 +939,9 @@ background-color: rgb(225, 225, 225);</string>
     <property name="geometry">
      <rect>
       <x>910</x>
-      <y>460</y>
+      <y>450</y>
       <width>101</width>
-      <height>141</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="font">
@@ -1096,10 +1014,10 @@ background-color: rgb(225, 225, 225);</string>
    <widget class="QGroupBox" name="groupBoxPA">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>460</y>
-      <width>181</width>
-      <height>141</height>
+      <x>250</x>
+      <y>540</y>
+      <width>131</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="font">
@@ -1109,28 +1027,15 @@ background-color: rgb(225, 225, 225);</string>
      </font>
     </property>
     <property name="title">
-     <string>PA Setting</string>
+     <string>PA State</string>
     </property>
-    <widget class="QLabel" name="qlPAStateTitle">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>61</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>PA State</string>
-     </property>
-    </widget>
     <widget class="QToolButton" name="btnSetPAState">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>90</y>
-       <width>61</width>
-       <height>31</height>
+       <x>70</x>
+       <y>30</y>
+       <width>51</width>
+       <height>21</height>
       </rect>
      </property>
      <property name="text">
@@ -1140,11 +1045,17 @@ background-color: rgb(225, 225, 225);</string>
     <widget class="QLineEdit" name="qlePAState">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>60</y>
-       <width>61</width>
+       <x>10</x>
+       <y>30</y>
+       <width>51</width>
        <height>20</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Calibri</family>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="inputMethodHints">
       <set>Qt::ImhNone</set>
@@ -1162,27 +1073,106 @@ background-color: rgb(225, 225, 225);</string>
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
+   </widget>
+   <widget class="QFrame" name="frame_2">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>500</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QToolButton" name="btnHPM">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>61</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>HPM</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="autoExclusive">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="btnLPM">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>0</y>
+       <width>61</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>LPM</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="autoExclusive">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBoxMIPI">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>450</y>
+      <width>171</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string>MIPI</string>
+    </property>
     <widget class="QLabel" name="qlMIPIAddrTitle">
      <property name="geometry">
       <rect>
-       <x>100</x>
-       <y>30</y>
+       <x>90</x>
+       <y>40</y>
        <width>71</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
-      <string>MIPI Addr</string>
+      <string>Address</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="qleMIPIAddr">
      <property name="geometry">
       <rect>
-       <x>100</x>
-       <y>60</y>
+       <x>90</x>
+       <y>70</y>
        <width>61</width>
        <height>20</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Calibri</family>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="inputMethodHints">
       <set>Qt::ImhNone</set>
@@ -1203,14 +1193,37 @@ background-color: rgb(225, 225, 225);</string>
     <widget class="QToolButton" name="btnSetMIPIAddr">
      <property name="geometry">
       <rect>
-       <x>100</x>
-       <y>90</y>
+       <x>90</x>
+       <y>100</y>
        <width>61</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
       <string>Set</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="qlMIPIChTitle">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Channel</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboMIPICh">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
      </property>
     </widget>
    </widget>
@@ -1221,17 +1234,18 @@ background-color: rgb(225, 225, 225);</string>
    <zorder>btnChPlus</zorder>
    <zorder>btnPDMMinus</zorder>
    <zorder>groupBoxMisc</zorder>
-   <zorder>frame_2</zorder>
    <zorder>frame_3</zorder>
    <zorder>tableWidget</zorder>
    <zorder>qlMessage</zorder>
    <zorder>groupBoxSMPSStep</zorder>
    <zorder>groupBoxICQStep</zorder>
    <zorder>groupBoxPA</zorder>
-   <zorder>btnSetMIPIAddr</zorder>
-   <zorder>qlMIPIAddrTitle</zorder>
-   <zorder>qleMIPIAddr</zorder>
-   <zorder>qlPAStateTitle</zorder>
+   <zorder>frame_2</zorder>
+   <zorder>groupBoxMIPI</zorder>
+   <zorder>btnHPM</zorder>
+   <zorder>btnTxOn</zorder>
+   <zorder>btnLPM</zorder>
+   <zorder>btnTxOff</zorder>
   </widget>
   <action name="actionCopy">
    <property name="text">
