@@ -52,6 +52,30 @@ class QCOM_phone:
 		#print("Supports EFS: {0}".format(truth_dict[bool(_bSupportsEFS)]))
 		#print("Supports SW Download: {0}".format(truth_dict[bool(_bSupportsSwDownload)]))
 		print("Using QPST: {0}".format(truth_dict[bool(_bUsingQPST)]))
+		
+	def get_phone_port_list(self):
+		"""
+			Return a list containing available phone ports
+			If no port found, return a empty list
+		"""
+		iNumPorts = c_ushort(16)	# as an input: max length of aPortList
+									# as an output: number of ports found
+		UShortList = c_ushort * 16
+		aPortList = UShortList()	# output: array of ports available
+		iNumIgnorePorts = c_ushort(0)	# number of ports to ignore
+		aIgnorePortList = pointer(c_ushort())	# list of ports to ignore
+		bOK = self.qdll.QLIB_GetAvailablePhonesPortList(byref(iNumPorts), byref(aPortList), iNumIgnorePorts, aIgnorePortList)
+		PhoneList = []
+		if (bOK):
+			print("NumPorts: {0}".format(iNumPorts))
+			print("Port:")
+			for i in range(iNumPorts.value):
+				print(aPortList[i])
+				PhoneList.append(aPortList[i])
+		else:
+			print("no port found")
+		
+		return PhoneList
 
 	def connect_phone(self, iComPort):
 		#iComPort = c_uint(40)	# move to WCDMA_attributes
@@ -364,7 +388,10 @@ if __name__ == "__main__":
 	phone = QCOM_phone()
 	
 	phone.initial_QMSL(bUseQPST)
+	pl = phone.get_phone_port_list()
+	for i in pl: print(i)
 	
+	"""
 	phone.connect_phone(Phone_Com_Port)
 	
 	phone.set_online_mode()
@@ -403,7 +430,7 @@ if __name__ == "__main__":
 	
 	# Disconnect phone
 	phone.disconnect()
-	
+	"""
 	
 
 """
