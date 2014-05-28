@@ -20,19 +20,46 @@ File Description
 
 <table>
 	<tr>
+		<td>File name</td>
+		<td>Function</td>
+	</tr>
+	<tr>
 		<td>RF_Tuning_Tool_2.pyw</td>
-		<td>GUI WCDMA/LTE tuning tool<td>
+		<td>GUI WCDMA/LTE tuning tool</td>
+	</tr>
+	<tr>
+		<td>RF_Tuning_Tool.pyw</td>
+		<td>GUI WCDMA/LTE tuning tool (obsolete)</td>
+	</tr>
+	<tr>
+		<td>Agilent8960.py</td>
+		<td>Wrap of Agilent8960 GPIB commands</td>
+	</tr>
+	<tr>
+		<td>Anritsu8820C.py</td>
+		<td>Wrap of Anritsu8820C GPIB commands</td>
+	</tr>
+	<tr>
+		<td>QCOM.py</td>
+		<td>Wrap of Qualcomm QMSL library</td>
+	</tr>
+	<tr>
+		<td>tuning.py</td>
+		<td>Command-line WCDMA tuning tool</td>
+	</tr>
+	<tr>
+		<td>tuning_LTE.py</td>
+		<td>Command-line LTE tuning tool</td>
+	</tr>
+	<tr>
+		<td>WCDMA_attributes.py</td>
+		<td>Parameters including COM port, path loss, etc.</td>
+	</tr>
+	<tr>
+		<td>WCDMA.py</td>
+		<td>Link mode auto test tool for TxP/sensitivity</td>
 	</tr>
 </table>
-RF_Tuning_Tool.pyw		GUI WCDMA/LTE tuning tool (obsolete)
-Agilent8960.py			Wrap of Agilent8960 GPIB commands
-Anritsu8820C.py			Wrap of Anritsu8820C GPIB commands
-QCOM.py					Wrap of Qualcomm QMSL library
-tuning.py				Command-line WCDMA tuning tool
-tuning_LTE.py			Command-line LTE tuning tool
-WCDMA_attributes.py		Parameters including COM port, path loss, etc.
-WCDMA.py				Link mode auto test tool for TxP/sensitivity
-
 
 Supported Device
 ----------------
