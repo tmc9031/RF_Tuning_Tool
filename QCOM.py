@@ -455,6 +455,21 @@ if __name__ == "__main__":
 	print(a)
 	print(type(a))
 	
+	print("...write...")
+	a = phone.RFFE_readwrite(Read=False, SlaveID="c", Address="1", Data='bc')
+	print(a)
+	print(type(a))
+	
+	print("...trigger...")
+	a = phone.RFFE_readwrite(Read=False, SlaveID="c", Address="1c", Data='1')
+	print(a)
+	print(type(a))
+	
+	print("...read...")
+	a = phone.RFFE_readwrite(Read=True, SlaveID="c", Address="1")
+	print(a)
+	print(type(a))
+	
 	phone.disconnect()
 	"""
 	phone.connect_phone(Phone_Com_Port)

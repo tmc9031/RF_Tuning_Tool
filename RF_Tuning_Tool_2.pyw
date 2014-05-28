@@ -159,15 +159,19 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 	
 	def setupPhone(self, COM_port):
 		try:
+			print("here")
 			if (COM_port == "Disconnect"):
+				print("dis")
 				self.phone.disconnect()
 			else:
-				Phone_Com_Port = int(COM_Port[3:])
+				Phone_Com_Port = int(COM_port[3:])
 				self.phone.connect_phone(Phone_Com_Port)
 				self.phone.set_online_mode()
 				self.phone.set_FTM_mode()
-		except:
+				self.print_message("Set FTM mode ok")
+		except Error as e:
 			self.print_message("Set FTM mode error", bError=True)
+			print("error({0}): {1}".format(e.errno, e.strerror))
 			
 	def comboBoxTechSelected(self, tech):
 		if ((self.phone is None) or (self.callbox is None)):
@@ -310,15 +314,16 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		"""
 		self.MIPI_ch = int(self.qcbMIPICh.currentText())
 		self.MIPI_slave_ID = self.qleMIPISlaveID.text()
+		self.qleMIPISlaveID.setText(unicode(self.MIPI_slave_ID.upper()))
 		self.readICQ()
 		
 	
 	def readICQ(self):
-		if not(MIPI_slave_ID is None):
+		if not(self.MIPI_slave_ID is None):
 			value = self.phone.RFFE_readwrite(Read=True, SlaveID=self.MIPI_slave_ID, Address='1', Data=None, ExtMode=False, iChannel=self.MIPI_ch, HalfSpeed=False)
 			if not(value is None):
 				self.ICQ_value = value
-				self.qleICQ.setText(unicode(self.ICQ_value))
+				self.qleICQ.setText(unicode(self.ICQ_value.upper()))
 			else:
 				self.print_message("return value of readICQ is None", bError = True)
 				self.qleICQ.setText('0')
@@ -329,8 +334,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		"""
 			Data: HEX string
 		"""
-		if not(MIPI_slave_ID is None):
-			value = self.phone.RFFE_readwrite(Read=False, SlaveID=self.MIPI_slave_ID, Address='1', Data, ExtMode=False, iChannel=self.MIPI_ch, HalfSpeed=False)
+		if not(self.MIPI_slave_ID is None):
+			value = self.phone.RFFE_readwrite(Read=False, SlaveID=self.MIPI_slave_ID, Address='1', Data=Data, ExtMode=False, iChannel=self.MIPI_ch, HalfSpeed=False)
 			if (value is None):
 				self.print_message("return value of writeICQ is None", bError = True)
 		else:
@@ -340,7 +345,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		"""
 			Trigger: write '1' in register '1c'
 		"""
-		if not(MIPI_slave_ID is None):
+		if not(self.MIPI_slave_ID is None):
 			value = self.phone.RFFE_readwrite(Read=False, SlaveID=self.MIPI_slave_ID, Address='1c', Data='1', ExtMode=False, iChannel=self.MIPI_ch, HalfSpeed=False)
 			if (value is None):
 				self.print_message("return value of triggerMIPI is None", bError = True)
@@ -352,7 +357,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.writeICQ(icq_temp)
 		self.triggerMIPI()
 		self.readICQ()
-		if (icq_temp != self.ICQ_value):
+		if (icq_temp.upper() != self.ICQ_value.upper()):
 			self.print_message("Set ICQ failed", bError = True)
 		else:
 			self.measure()
@@ -363,7 +368,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.writeICQ(icq_temp)
 		self.triggerMIPI()
 		self.readICQ()
-		if (icq_temp != self.ICQ_value):
+		if (icq_temp.upper() != self.ICQ_value.upper()):
 			self.print_message("Increase ICQ failed", bError = True)
 		else:
 			self.measure()
@@ -374,7 +379,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.writeICQ(icq_temp)
 		self.triggerMIPI()
 		self.readICQ()
-		if (icq_temp != self.ICQ_value):
+		if (icq_temp.upper() != self.ICQ_value.upper()):
 			self.print_message("Decrease ICQ failed", bError = True)
 		else:
 			self.measure()
@@ -455,6 +460,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.PDM = PDM_init
 		self.qlePDM.setText(unicode(self.PDM))
 		self.SMPS_value = SMPS_init
+		self.qleSMPS.setText(unicode(self.SMPS_value))
 		self.callbox.set_UL_power_FTM(23)	#set Instrument UL power
 		if self.comboBoxTech.currentText() == "LTE":
 			self.set_phone_LTE_on()
@@ -478,6 +484,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.PDM = PDM_low
 		self.qlePDM.setText(unicode(self.PDM))
 		self.SMPS_value = SMPS_low
+		self.qleSMPS.setText(unicode(self.SMPS_value))
 		if self.comboBoxTech.currentText() == "LTE":
 			self.set_phone_LTE_on()
 		elif self.comboBoxTech.currentText() == "WCDMA":
@@ -713,7 +720,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.phone.set_PA_range(self.PArange)
 		# Set PDM
 		self.phone.set_LTE_PDM(self.PDM)
-		
+		# read ICQ
+		self.readICQ()
 		
 	def set_phone_WCDMA_on(self):
 		print("set phone wcdma on")
@@ -732,6 +740,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.phone.set_PA_range(self.PArange)
 		# Set PDM
 		self.phone.set_PDM(self.PDM)
+		# read ICQ
+		self.readICQ()
 		
 	def set_phone_GSM_on(self):
 		print("set phone GSM on")
@@ -762,13 +772,35 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.txp = self.callbox.read_LTE_TXP()
 			#read ACLR
 			self.aclr = self.callbox.read_LTE_ACLR()
+			# check input level
+			level = self.callbox.get_UL_power()
+			if (abs(self.txp - level) >= 5):
+				if (abs(self.txp - level) >= 100):		# for Anritsu 8820c temp solution; 8820C returns "999999" when level over
+					self.callbox.set_UL_power_FTM(level+10)
+				else:
+					self.callbox.set_UL_power_FTM(int(self.txp))
+				self.callbox.init_LTE_TXP_ACLR()
+				self.txp = self.callbox.read_LTE_TXP()
+				self.aclr = self.callbox.read_LTE_ACLR()
+			
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			#start channel power & ACLR measurement again
-			self.callbox.init_TXP_ACLR()	
+			self.callbox.init_TXP_ACLR()
 			#read tx power
 			self.txp = self.callbox.read_TXP()
 			#read ACLR
 			self.aclr = self.callbox.read_ACLR()
+			# check input level
+			level = self.callbox.get_UL_power()
+			if (abs(self.txp - level) >= 5):
+				if (abs(self.txp - level) >= 100):		# for Anritsu 8820c temp solution; 8820C returns "999999" when level over
+					self.callbox.set_UL_power_FTM(level+10)
+				else:
+					self.callbox.set_UL_power_FTM(int(self.txp))
+				self.callbox.init_TXP_ACLR()
+				self.txp = self.callbox.read_TXP()
+				self.aclr = self.callbox.read_ACLR()
+			
 		elif self.comboBoxTech.currentText() == "GSM":
 			# Sweep for GSM
 			self.callbox.init_GSM_power()
@@ -830,7 +862,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.tableWidget.setItem((self.current_edit_row), 10, itemSMPS)
 			
 			if not(self.ICQ_value is None):
-				itemICQ = QTableWidgetItem(unicode(self.ICQ_value))
+				itemICQ = QTableWidgetItem(unicode(self.ICQ_value.upper()))
 				self.tableWidget.setItem((self.current_edit_row), 11, itemICQ)
 			
 			
@@ -862,7 +894,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.tableWidget.setItem((self.current_edit_row), 8, itemSMPS)
 			
 			if not(self.ICQ_value is None):
-				itemICQ = QTableWidgetItem(unicode(self.ICQ_value))
+				itemICQ = QTableWidgetItem(unicode(self.ICQ_value.upper()))
 				self.tableWidget.setItem((self.current_edit_row), 9, itemICQ)
 			
 		elif self.comboBoxTech.currentText() == "GSM":
