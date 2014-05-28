@@ -18,9 +18,12 @@ integrated tuning tools in both command-line and GUI.
 File Description
 ----------------
 
-File name				Function
---------------------	--------------------------------------------------
-RF_Tuning_Tool_2.pyw	GUI WCDMA/LTE tuning tool
+<table>
+	<tr>
+		<td>RF_Tuning_Tool_2.pyw</td>
+		<td>GUI WCDMA/LTE tuning tool<td>
+	</tr>
+</table>
 RF_Tuning_Tool.pyw		GUI WCDMA/LTE tuning tool (obsolete)
 Agilent8960.py			Wrap of Agilent8960 GPIB commands
 Anritsu8820C.py			Wrap of Anritsu8820C GPIB commands
