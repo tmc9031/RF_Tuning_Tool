@@ -18,13 +18,14 @@ integrated tuning tools in command-line and GUI, respectively.
 File Description
 ----------------
 
+RF_Tuning_Tool_2.pyw:	GUI WCDMA/LTE tuning tool
+RF_Tuning_Tool.pyw:	GUI WCDMA/LTE tuning tool (obsolete)
 Agilent8960.py:		Wrap of Agilent8960 GPIB commands
 Anritsu8820C.py:	Wrap of Anritsu8820C GPIB commands
-QCOM.py:			Wrap of Qualcomm QMSL library
-RF_Tuning_Tool.pyw:	GUI WCDMA/LTE tuning tool
-tuning.py:			Command-line WCDMA tuning tool
+QCOM.py:		Wrap of Qualcomm QMSL library
+tuning.py:		Command-line WCDMA tuning tool
 tuning_LTE.py:		Command-line LTE tuning tool
-WCDMA_attributes.py:Parameters including COM port, path loss, etc.
+WCDMA_attributes.py:	Parameters including COM port, path loss, etc.
 WCDMA.py:			Link mode auto test tool for TxP/sensitivity
 
 
