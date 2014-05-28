@@ -50,9 +50,9 @@ Software
 - Python (tested with 2.7.5, Win7)
 - PyVisa (for callbox control)
 - PySide (Python binding for QT)
-- Qualcomm Library QMSL_MSVC10R (for phone control) [^1]
+- Qualcomm Library QMSL_MSVC10R (for phone control) [1]
 	
-[^1]: Qualcomm library could be found in QDART
+[1]: Qualcomm library could be found in QDART
 
 
 Usage
