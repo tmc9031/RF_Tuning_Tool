@@ -199,6 +199,14 @@ class Agilent8960(Instrument):
 		s = "CALL:MS:POW:TARG "+str(UL_power)
 		self.write(s)
 	
+	def get_UL_power(self):
+		"""
+			get UL power (callbox setting)
+		"""
+		s = self.ask("CALL:MS:POW:TARG?")
+		UL_level = Decimal(s)
+		return UL_level
+	
 	def set_all_up_bit(self):
 		"""
 			set all up bit and target 23dBm
@@ -305,7 +313,7 @@ class Agilent8960(Instrument):
 			return Txp
 		else:
 			print("Tx Power integrity fail: "+str(Integrity))
-			return Txp
+			return 999999		# temp solution, 8960 still get a value if over range, translate to 8820c type of value
 
 	def read_ACLR(self):
 		"""
