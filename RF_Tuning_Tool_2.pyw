@@ -772,17 +772,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.txp = self.callbox.read_LTE_TXP()
 			#read ACLR
 			self.aclr = self.callbox.read_LTE_ACLR()
-			# check input level
-			level = self.callbox.get_UL_power()
-			if (abs(self.txp - level) >= 5):
-				if (abs(self.txp - level) >= 100):		# for Anritsu 8820c temp solution; 8820C returns "999999" when level over
-					self.callbox.set_UL_power_FTM(level+10)
-				else:
-					self.callbox.set_UL_power_FTM(int(self.txp))
-				self.callbox.init_LTE_TXP_ACLR()
-				self.txp = self.callbox.read_LTE_TXP()
-				self.aclr = self.callbox.read_LTE_ACLR()
-			
+				
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			#start channel power & ACLR measurement again
 			self.callbox.init_TXP_ACLR()
@@ -790,16 +780,6 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.txp = self.callbox.read_TXP()
 			#read ACLR
 			self.aclr = self.callbox.read_ACLR()
-			# check input level
-			level = self.callbox.get_UL_power()
-			if (abs(self.txp - level) >= 5):
-				if (abs(self.txp - level) >= 100):		# for Anritsu 8820c temp solution; 8820C returns "999999" when level over
-					self.callbox.set_UL_power_FTM(level+10)
-				else:
-					self.callbox.set_UL_power_FTM(int(self.txp))
-				self.callbox.init_TXP_ACLR()
-				self.txp = self.callbox.read_TXP()
-				self.aclr = self.callbox.read_ACLR()
 			
 		elif self.comboBoxTech.currentText() == "GSM":
 			# Sweep for GSM
