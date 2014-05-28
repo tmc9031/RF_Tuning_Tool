@@ -765,6 +765,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 	def measure(self):
 		print("measure")
 		
+		limit = lambda x: x if x <=25 else 25		# lambda function to limit UL level as 25
+		
 		if self.comboBoxTech.currentText() == "LTE":
 			#start channel power & ACLR measurement again
 			self.callbox.init_LTE_TXP_ACLR()
@@ -772,6 +774,24 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.txp = self.callbox.read_LTE_TXP()
 			#read ACLR
 			self.aclr = self.callbox.read_LTE_ACLR()
+			# check input level
+			level = self.callbox.get_UL_power()
+			while (abs(self.txp - level) >= 5):
+				if (self.txp > 1000):		# over range: 8820C returns "999999" when level over, 8960 reading is also transferred as "999999" 
+					if level >=25: 
+						self.print_message("Over range, please check environment.", bError=True)
+						break
+					else:
+						level = limit(level+5)
+						self.callbox.set_UL_power_FTM(level)
+				elif (self.txp < -1000):		# under range: only 8960 return specific indication, 8960 reading is transferred as "-999999" 
+					level -= 5
+					self.callbox.set_UL_power_FTM(level)
+				else:
+					self.callbox.set_UL_power_FTM(int(self.txp))
+				self.callbox.init_LTE_TXP_ACLR()
+				self.txp = self.callbox.read_LTE_TXP()
+				self.aclr = self.callbox.read_LTE_ACLR()
 				
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			#start channel power & ACLR measurement again
@@ -780,6 +800,24 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.txp = self.callbox.read_TXP()
 			#read ACLR
 			self.aclr = self.callbox.read_ACLR()
+			# check input level
+			level = self.callbox.get_UL_power()
+			while (abs(self.txp - level) >= 5):
+				if (self.txp > 1000):		# over range: 8820C returns "999999" when level over, 8960 reading is also transferred as "999999" 
+					if level >=25: 
+						self.print_message("Over range, please check environment.", bError=True)
+						break
+					else:
+						level = limit(level+5)
+						self.callbox.set_UL_power_FTM(level)
+				elif (self.txp < -1000):		# under range: only 8960 return specific indication, 8960 reading is transferred as "-999999" 
+					level -= 5
+					self.callbox.set_UL_power_FTM(level)
+				else:
+					self.callbox.set_UL_power_FTM(int(self.txp))
+				self.callbox.init_LTE_TXP_ACLR()
+				self.txp = self.callbox.read_LTE_TXP()
+				self.aclr = self.callbox.read_LTE_ACLR()
 			
 		elif self.comboBoxTech.currentText() == "GSM":
 			# Sweep for GSM
