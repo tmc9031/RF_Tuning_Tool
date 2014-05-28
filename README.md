@@ -14,6 +14,9 @@ time and distract RF engineer from tuning itself.
 This program contains three classes to wrap callbox and phone commands and 
 integrated tuning tools in both command-line and GUI.
 
+Snapshot
+------------
+![Snapshot](img/snapshot.png)
 
 File Description
 ----------------
