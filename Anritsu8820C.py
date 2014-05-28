@@ -197,8 +197,8 @@ class Anritsu8820C(Instrument):
 			get UL power (callbox setting)
 		"""
 		s = self.ask("ILVL?")
-		Txp = Decimal(s)
-		return Txp
+		UL_level = Decimal(s)
+		return UL_level
 	
 	def set_all_up_bit(self):
 		"""
