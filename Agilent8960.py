@@ -311,9 +311,15 @@ class Agilent8960(Instrument):
 			#print("Integrity ok")
 			#print("Tx Power:"+str(Txp))
 			return Txp
+		elif Integrity == 5:	# Over Range
+			print("Tx Power over range, integrity: "+str(Integrity))
+			return 999999		# temp solution, 8960 still get a value if over range, translate to 8820c type of value
+		elif Integrity == 6:	# Under Range
+			print("Tx Power under range, integrity: "+str(Integrity))
+			return -999999		# temp solution, 8960 still get a value if under range, return a very small value for distinction
 		else:
 			print("Tx Power integrity fail: "+str(Integrity))
-			return 999999		# temp solution, 8960 still get a value if over range, translate to 8820c type of value
+			return Txp
 
 	def read_ACLR(self):
 		"""
