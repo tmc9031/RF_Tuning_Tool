@@ -87,9 +87,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		# Get available phone list, then update to Phone COM comboBox
 		self.btnGetCOM.clicked.connect(self.getPhoneCOM)
 		self.comboBoxCOM.activated[unicode].connect(self.setupPhone)
-		
-		self.qlePDM.setText(unicode(self.PDM))
-		self.qleSMPS.setText(unicode(self.SMPS_value))
+
 		
 		# MIPI init
 		self.qcbMIPICh.addItems(["0", "1"])
@@ -97,16 +95,22 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		
 		# btnSetPDM signal
 		self.btnSetPDM.clicked.connect(self.setPDM)
+		self.qlePDM.setText(unicode(self.PDM))
 		
 		# SMPS signal
 		self.btnSetSMPS.clicked.connect(self.btnSetSMPSClicked)
 		self.btnSMPSPlus.clicked.connect(self.increaseSMPS)
 		self.btnSMPSMinus.clicked.connect(self.decreaseSMPS)
+		self.qleSMPS.setText(unicode(self.SMPS_value))
 		
 		# ICQ signal
 		self.btnSetICQ.clicked.connect(self.btnSetICQClicked)
 		self.btnICQPlus.clicked.connect(self.increaseICQ)
 		self.btnICQMinus.clicked.connect(self.decreaseICQ)
+		
+		# PA range signal
+		self.btnSetPAState.clicked.connect(self.setPARange)
+		
 		
 		# Setup instrument and phone
 		#self.setupInstrument()
@@ -197,6 +201,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				self.PArange = PA_range_map[self.test_band][0]
 			else:
 				self.PArange = iPArange_high
+				self.qlePAState.setText(unicode(self.PArange))
 			self.btnHPM.setChecked(True)
 			#switch Anritsu to LTE mode
 			if (self.callbox.switch_to_LTE() == 1):
@@ -231,6 +236,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				self.PArange = PA_range_map[self.test_band][0]
 			else:
 				self.PArange = iPArange_high
+				self.qlePAState.setText(unicode(self.PArange))
 			self.btnHPM.setChecked(True)
 			#switch Instrument to WCDMA mode
 			if (self.callbox.switch_to_WCDMA() == 1):
@@ -445,6 +451,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.PArange = PA_range_map[self.test_band][0]
 		else:
 			self.PArange = iPArange_high
+			self.qlePAState.setText(unicode(self.PArange))
 		self.PDM = PDM_init
 		self.qlePDM.setText(unicode(self.PDM))
 		self.SMPS_value = SMPS_init
@@ -466,6 +473,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.PArange = PA_range_map[self.test_band][1]
 		else:
 			self.PArange = iPArange_low
+			self.qlePAState.setText(unicode(self.PArange))
 		#PArange = iPArange_low	#set to low gain mode
 		self.PDM = PDM_low
 		self.qlePDM.setText(unicode(self.PDM))
@@ -479,7 +487,20 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.callbox.set_UL_power_FTM(-20)		# Set 8960 UL power
 		self.measure()
 		self.print_result()
+	
+	def setPARange(self):
+		print("Set PA range")
 		
+		self.PArange = int(self.qlePAState.text())
+		if self.comboBoxTech.currentText() == "LTE":
+			self.set_phone_LTE_on()
+		elif self.comboBoxTech.currentText() == "WCDMA":
+			self.set_phone_WCDMA_on()
+		# Set SMPS
+		self.set_SMPS()
+		#self.callbox.set_UL_power_FTM(-20)		# Set 8960 UL power
+		self.measure()
+		self.print_result()
 		
 	def setTxOn(self):
 		self.print_message("set Tx ON")
