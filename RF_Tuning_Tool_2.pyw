@@ -57,7 +57,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.comboBoxBand.activated[unicode].connect(self.comboBoxBandSelected)
 		
 		self.qlMessage.clear()
-		self.print_message("<font color=red> Select LTE/WCDMA first, then select Band. </color>")
+		self.print_message("<font color=red> Set GPIB/COM, then select tech and band. </color>")
 		
 		self.spinBoxPDMStart.setRange(PDM_min, PDM_max)
 		self.spinBoxPDMStart.setValue(PDM_start)
