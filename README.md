@@ -19,7 +19,7 @@ File Description
 ----------------
 
 File name				Function
----------				--------
+--------------------	--------------------------------------------------
 RF_Tuning_Tool_2.pyw	GUI WCDMA/LTE tuning tool
 RF_Tuning_Tool.pyw		GUI WCDMA/LTE tuning tool (obsolete)
 Agilent8960.py			Wrap of Agilent8960 GPIB commands
@@ -50,8 +50,9 @@ Software
 - Python (tested with 2.7.5, Win7)
 - PyVisa (for callbox control)
 - PySide (Python binding for QT)
-- Qualcomm Library QMSL_MSVC10R (for phone control)
-	:Qualcomm library is not free, you need to get it from Qualcomm directly.
+- Qualcomm Library QMSL_MSVC10R (for phone control) [^1]
+	
+[^1]: Qualcomm library could be found in QDART
 
 
 Usage
