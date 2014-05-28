@@ -98,6 +98,15 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		# btnSetPDM signal
 		self.btnSetPDM.clicked.connect(self.setPDM)
 		
+		# SMPS signal
+		self.btnSetSMPS.clicked.connect(self.btnSetSMPSClicked)
+		self.btnSMPSPlus.clicked.connect(self.increaseSMPS)
+		self.btnSMPSMinus.clicked.connect(self.decreaseSMPS)
+		
+		# ICQ signal
+		self.btnSetICQ.clicked.connect(self.btnSetICQClicked)
+		self.btnICQPlus.clicked.connect(self.increaseICQ)
+		self.btnICQMinus.clicked.connect(self.decreaseICQ)
 		
 		# Setup instrument and phone
 		#self.setupInstrument()
@@ -244,7 +253,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.eModeId = FTM_MODE_ID_WCDMA
 			self.eNewMode = Band_QMSL_map[self.test_band]
 			self.set_phone_WCDMA_on()
-			self.qlPDM.setText(unicode(self.PDM))
+			self.qlePDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
 			
@@ -294,20 +303,76 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			Read ICQ value of selected PA
 		"""
 		self.MIPI_ch = int(self.qcbMIPICh.currentText())
-		self.MIPI_slave_ID = self.qleMIPIAddr.text()
+		self.MIPI_slave_ID = self.qleMIPISlaveID.text()
 		self.readICQ()
-		if not(self.ICQ_value is None):
-			qleICQ.setText(unicode(self.ICQ_value))
+		
 	
 	def readICQ(self):
 		if not(MIPI_slave_ID is None):
 			value = self.phone.RFFE_readwrite(Read=True, SlaveID=self.MIPI_slave_ID, Address='1', Data=None, ExtMode=False, iChannel=self.MIPI_ch, HalfSpeed=False)
 			if not(value is None):
 				self.ICQ_value = value
+				self.qleICQ.setText(unicode(self.ICQ_value))
 			else:
 				self.print_message("return value of readICQ is None", bError = True)
+				self.qleICQ.setText('0')
 		else:
 			self.print_message("MIPI_slave_ID is None in readICQ", bError = True)
+
+	def writeICQ(self, Data):
+		"""
+			Data: HEX string
+		"""
+		if not(MIPI_slave_ID is None):
+			value = self.phone.RFFE_readwrite(Read=False, SlaveID=self.MIPI_slave_ID, Address='1', Data, ExtMode=False, iChannel=self.MIPI_ch, HalfSpeed=False)
+			if (value is None):
+				self.print_message("return value of writeICQ is None", bError = True)
+		else:
+			self.print_message("MIPI_slave_ID is None in writeICQ", bError = True)
+	
+	def triggerMIPI(self):
+		"""
+			Trigger: write '1' in register '1c'
+		"""
+		if not(MIPI_slave_ID is None):
+			value = self.phone.RFFE_readwrite(Read=False, SlaveID=self.MIPI_slave_ID, Address='1c', Data='1', ExtMode=False, iChannel=self.MIPI_ch, HalfSpeed=False)
+			if (value is None):
+				self.print_message("return value of triggerMIPI is None", bError = True)
+		else:
+			self.print_message("MIPI_slave_ID is None in triggerMIPI", bError = True)
+	
+	def btnSetICQClicked(self):
+		icq_temp = self.qleICQ.text()
+		self.writeICQ(icq_temp)
+		self.triggerMIPI()
+		self.readICQ()
+		if (icq_temp != self.ICQ_value):
+			self.print_message("Set ICQ failed", bError = True)
+		else:
+			self.measure()
+			self.print_result()
+	
+	def increaseICQ(self):
+		icq_temp = hex(int(self.qleICQ.text(),16) + int(self.qleICQStep.text(),16))[2:]
+		self.writeICQ(icq_temp)
+		self.triggerMIPI()
+		self.readICQ()
+		if (icq_temp != self.ICQ_value):
+			self.print_message("Increase ICQ failed", bError = True)
+		else:
+			self.measure()
+			self.print_result()
+		
+	def decreaseICQ(self):
+		icq_temp = hex(int(self.qleICQ.text(),16) - int(self.qleICQStep.text(),16))[2:]
+		self.writeICQ(icq_temp)
+		self.triggerMIPI()
+		self.readICQ()
+		if (icq_temp != self.ICQ_value):
+			self.print_message("Decrease ICQ failed", bError = True)
+		else:
+			self.measure()
+			self.print_result()
 	
 	def startSweep(self):
 		print("Start Sweep")
@@ -348,7 +413,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 						self.phone.set_LTE_PDM(self.PDM)
 					elif self.comboBoxTech.currentText() == "WCDMA":
 						self.phone.set_PDM(self.PDM)
-					self.qlPDM.setText(unicode(self.PDM))
+					self.qlePDM.setText(unicode(self.PDM))
 					self.measure()
 					self.print_result()
 	
@@ -381,7 +446,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		else:
 			self.PArange = iPArange_high
 		self.PDM = PDM_init
-		self.qlPDM.setText(unicode(self.PDM))
+		self.qlePDM.setText(unicode(self.PDM))
 		self.SMPS_value = SMPS_init
 		self.callbox.set_UL_power_FTM(23)	#set Instrument UL power
 		if self.comboBoxTech.currentText() == "LTE":
@@ -403,7 +468,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.PArange = iPArange_low
 		#PArange = iPArange_low	#set to low gain mode
 		self.PDM = PDM_low
-		self.qlPDM.setText(unicode(self.PDM))
+		self.qlePDM.setText(unicode(self.PDM))
 		self.SMPS_value = SMPS_low
 		if self.comboBoxTech.currentText() == "LTE":
 			self.set_phone_LTE_on()
@@ -425,7 +490,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.set_phone_WCDMA_on()
 		elif self.comboBoxTech.currentText() == "GSM":
 			self.set_phone_GSM_on()
-		self.qlPDM.setText(unicode(self.PDM))
+		self.qlePDM.setText(unicode(self.PDM))
 		# Set SMPS
 		self.set_SMPS()
 		self.measure()
@@ -448,7 +513,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.phone.set_LTE_PDM(self.PDM)
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			self.phone.set_PDM(self.PDM)
-		self.qlPDM.setText(unicode(self.PDM))
+		self.qlePDM.setText(unicode(self.PDM))
 		self.measure()
 		self.print_result()
 		
@@ -462,11 +527,14 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.phone.set_LTE_PDM(self.PDM)
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			self.phone.set_PDM(self.PDM)
-		self.qlPDM.setText(unicode(self.PDM))
+		self.qlePDM.setText(unicode(self.PDM))
 		self.measure()
 		self.print_result()
 	
 	def setPDM(self):
+		"""
+			Function for btnSetPDM clicked
+		"""
 		print("set PDM")
 		
 		pdm = int(self.qlePDM.text())
@@ -476,7 +544,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				self.phone.set_LTE_PDM(self.PDM)
 			elif self.comboBoxTech.currentText() == "WCDMA":
 				self.phone.set_PDM(self.PDM)
-			self.qlPDM.setText(unicode(self.PDM))
+			self.qlePDM.setText(unicode(self.PDM))
 			self.measure()
 			self.print_result()
 		else:
@@ -497,7 +565,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.btnTxOff.setChecked(True)
 			self.callbox.set_FDD_UL_channel(self.UL_ch)		# Set instrument to new channel
 			self.set_phone_LTE_on()
-			self.qlPDM.setText(unicode(self.PDM))
+			self.qlePDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
 		elif self.comboBoxTech.currentText() == "WCDMA":
@@ -511,7 +579,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.btnTxOff.setChecked(True)
 			self.callbox.set_FDD_UL_channel(self.UL_ch)		# Set instrument to new channel
 			self.set_phone_WCDMA_on()
-			self.qlPDM.setText(unicode(self.PDM))
+			self.qlePDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
 		elif self.comboBoxTech.currentText() == "GSM":
@@ -544,7 +612,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.btnTxOff.setChecked(True)
 			self.callbox.set_FDD_UL_channel(self.UL_ch)		# Set instrument to new channel
 			self.set_phone_LTE_on()
-			self.qlPDM.setText(unicode(self.PDM))
+			self.qlePDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
 		elif self.comboBoxTech.currentText() == "WCDMA":
@@ -558,7 +626,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.btnTxOff.setChecked(True)
 			self.callbox.set_FDD_UL_channel(self.UL_ch)		# Set instrument to new channel
 			self.set_phone_WCDMA_on()
-			self.qlPDM.setText(unicode(self.PDM))
+			self.qlePDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
 		elif self.comboBoxTech.currentText() == "GSM":
@@ -579,10 +647,29 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		
 	def set_SMPS(self):
 		self.phone.set_PA_BIAS_override(self.SMPS_ON)	# Set SMPS override ON
-		self.SMPS_value = int(self.qleSMPS.text())
 		self.phone.set_PA_BIAS_value(self.SMPS_value)
 		#self.qleSMPS.setText(unicode(self.SMPS_value))
+	
+	def btnSetSMPSClicked(self):
+		self.SMPS_value = int(self.qleSMPS.text())
+		self.set_SMPS()
+		self.measure()
+		self.print_result()
+	
+	def increaseSMPS(self):
+		self.SMPS_value += int(self.qleSMPSStep.text())
+		self.set_SMPS()
+		self.qleSMPS.setText(unicode(self.SMPS_value))
+		self.measure()
+		self.print_result()
 		
+	def decreaseSMPS(self):
+		self.SMPS_value -= int(self.qleSMPSStep.text())
+		self.set_SMPS()
+		self.qleSMPS.setText(unicode(self.SMPS_value))
+		self.measure()
+		self.print_result()
+	
 	def set_phone_LTE_on(self):
 		print("seet_phone_lte_on")
 		
