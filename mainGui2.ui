@@ -322,7 +322,7 @@ font: 12pt &quot;Calibri&quot;;
       <string>hh; </string>
      </property>
      <property name="text">
-      <string>BC</string>
+      <string>0</string>
      </property>
      <property name="maxLength">
       <number>2</number>
@@ -1027,9 +1027,9 @@ background-color: rgb(225, 225, 225);</string>
      </font>
     </property>
     <property name="title">
-     <string>PA State</string>
+     <string>PA Range</string>
     </property>
-    <widget class="QToolButton" name="btnSetPAState">
+    <widget class="QToolButton" name="btnSetPARange">
      <property name="geometry">
       <rect>
        <x>70</x>
@@ -1042,7 +1042,7 @@ background-color: rgb(225, 225, 225);</string>
       <string>Set</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="qlePAState">
+    <widget class="QLineEdit" name="qlePARange">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -1181,7 +1181,7 @@ background-color: rgb(225, 225, 225);</string>
       <string>H; </string>
      </property>
      <property name="text">
-      <string>E</string>
+      <string>C</string>
      </property>
      <property name="maxLength">
       <number>1</number>
@@ -1240,29 +1240,9 @@ background-color: rgb(225, 225, 225);</string>
      <string notr="true">color: red</string>
     </property>
     <property name="text">
-     <string>by William CHANG,2014</string>
+     <string>William CHANG @2014</string>
     </property>
    </widget>
-   <zorder>groupBoxInfo</zorder>
-   <zorder>groupBoxSweep</zorder>
-   <zorder>btnChMinus</zorder>
-   <zorder>btnPDMPlus</zorder>
-   <zorder>btnChPlus</zorder>
-   <zorder>btnPDMMinus</zorder>
-   <zorder>groupBoxMisc</zorder>
-   <zorder>frame_3</zorder>
-   <zorder>tableWidget</zorder>
-   <zorder>qlMessage</zorder>
-   <zorder>groupBoxSMPSStep</zorder>
-   <zorder>groupBoxICQStep</zorder>
-   <zorder>groupBoxPA</zorder>
-   <zorder>frame_2</zorder>
-   <zorder>groupBoxMIPI</zorder>
-   <zorder>btnHPM</zorder>
-   <zorder>btnTxOn</zorder>
-   <zorder>btnLPM</zorder>
-   <zorder>btnTxOff</zorder>
-   <zorder>qlAuthor</zorder>
   </widget>
   <action name="actionCopy">
    <property name="text">

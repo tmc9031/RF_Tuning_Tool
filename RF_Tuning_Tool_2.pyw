@@ -109,7 +109,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.btnICQMinus.clicked.connect(self.decreaseICQ)
 		
 		# PA range signal
-		self.btnSetPAState.clicked.connect(self.setPARange)
+		self.btnSetPARange.clicked.connect(self.setPARange)
 		
 		
 		# Setup instrument and phone
@@ -205,7 +205,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				self.PArange = PA_range_map[self.test_band][0]
 			else:
 				self.PArange = iPArange_high
-				self.qlePAState.setText(unicode(self.PArange))
+				self.qlePARange.setText(unicode(self.PArange))
 			self.btnHPM.setChecked(True)
 			#switch Anritsu to LTE mode
 			if (self.callbox.switch_to_LTE() == 1):
@@ -240,7 +240,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				self.PArange = PA_range_map[self.test_band][0]
 			else:
 				self.PArange = iPArange_high
-				self.qlePAState.setText(unicode(self.PArange))
+				self.qlePARange.setText(unicode(self.PArange))
 			self.btnHPM.setChecked(True)
 			#switch Instrument to WCDMA mode
 			if (self.callbox.switch_to_WCDMA() == 1):
@@ -456,7 +456,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.PArange = PA_range_map[self.test_band][0]
 		else:
 			self.PArange = iPArange_high
-			self.qlePAState.setText(unicode(self.PArange))
+			self.qlePARange.setText(unicode(self.PArange))
 		self.PDM = PDM_init
 		self.qlePDM.setText(unicode(self.PDM))
 		self.SMPS_value = SMPS_init
@@ -479,7 +479,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.PArange = PA_range_map[self.test_band][1]
 		else:
 			self.PArange = iPArange_low
-			self.qlePAState.setText(unicode(self.PArange))
+			self.qlePARange.setText(unicode(self.PArange))
 		#PArange = iPArange_low	#set to low gain mode
 		self.PDM = PDM_low
 		self.qlePDM.setText(unicode(self.PDM))
@@ -498,7 +498,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 	def setPARange(self):
 		print("Set PA range")
 		
-		self.PArange = int(self.qlePAState.text())
+		self.PArange = int(self.qlePARange.text())
 		if self.comboBoxTech.currentText() == "LTE":
 			self.set_phone_LTE_on()
 		elif self.comboBoxTech.currentText() == "WCDMA":
