@@ -192,6 +192,14 @@ class Anritsu8820C(Instrument):
 		s = "ILVL "+str(UL_power)
 		self.write(s)
 	
+	def get_UL_power(self):
+		"""
+			get UL power (callbox setting)
+		"""
+		s = self.ask("ILVL?")
+		UL_level = Decimal(s)
+		return UL_level
+	
 	def set_all_up_bit(self):
 		"""
 			set all up bit and target 23dBm

@@ -19,7 +19,7 @@ PDM_init = 88			# Start PDM (High gain mode default PDM) (RTR6285:210, WTR1605:9
 PDM_low = 50			# PDM for -20dBm (Low gain mode PDM) (RTR6285:140, WTR1605:60)
 PDM_max = 255			# PDM Max (RTR6285:255, WTR1605:127)
 PDM_min = 0
-iPArange_high = 2			# for high gain mode (RTR6285:3, WTR1605:0)
+iPArange_high = 0			# for high gain mode (RTR6285:3, WTR1605:0)
 iPArange_low = 3			# for low gain mode (RTR6285:0, WTR1605:3)
 PA_range_map = dict(B7=(0,1), # for different Band-PA setting => Band=(HPM,LPM)
 					B20=(0,3), 

@@ -52,9 +52,38 @@ class QCOM_phone:
 		#print("Supports EFS: {0}".format(truth_dict[bool(_bSupportsEFS)]))
 		#print("Supports SW Download: {0}".format(truth_dict[bool(_bSupportsSwDownload)]))
 		print("Using QPST: {0}".format(truth_dict[bool(_bUsingQPST)]))
+		
+	def get_phone_port_list(self):
+		"""
+			Return a list containing available phone ports
+			If no port found, return a empty list
+		"""
+		iNumPorts = c_ushort(16)	# as an input: max length of aPortList
+									# as an output: number of ports found
+		UShortList = c_ushort * 16
+		aPortList = UShortList()	# output: array of ports available
+		iNumIgnorePorts = c_ushort(0)	# number of ports to ignore
+		aIgnorePortList = pointer(c_ushort())	# list of ports to ignore
+		bOK = self.qdll.QLIB_GetAvailablePhonesPortList(byref(iNumPorts), byref(aPortList), iNumIgnorePorts, aIgnorePortList)
+		PhoneList = []
+		if (bOK):
+			print("NumPorts: {0}".format(iNumPorts))
+			print("Port:")
+			for i in range(iNumPorts.value):
+				print(aPortList[i])
+				PhoneList.append(aPortList[i])
+		else:
+			print("no port found")
+		
+		return PhoneList
 
-	def connect_phone(self, iComPort):
+	def connect_phone(self, ComPort):
 		#iComPort = c_uint(40)	# move to WCDMA_attributes
+		if (type(ComPort)== int):
+			iComPort = c_uint(ComPort)
+		else:
+			iComPort = ComPort
+			
 		self.qdll.QLIB_ConnectServerWithWait.restype = c_void_p
 		self.qdll.QLIB_ConnectServer.restype = c_void_p
 		self.g_hResourceContext = self.qdll.QLIB_ConnectServerWithWait(iComPort)
@@ -359,12 +388,90 @@ class QCOM_phone:
 			print("Set GSM Linear RGI {0}: {1}".format(iRgiIndex, pass_dict[bool(bOK)]))
 
 	
+	def RFFE_readwrite(self, Read, SlaveID, Address, Data=None, ExtMode=False, iChannel=0, HalfSpeed=False):
+		"""
+			Wrap QLIB_FTM_RFFE_READWRITE_CMD function
+			Parameters:
+				Read(bool): True->Read, False->Write
+				SlaveID(str): HEX(1~F)
+				Address(str): HEX
+				Data(str): in/out HEX
+				ExtMode(bool): True->Extended, False->Non-extended
+				iChannel(int): 0/1
+				HalfSpeed(bool): True-> Half-speed, False-> Full-speed
+			Return:
+				Data in HEX string
+				None if failed
+		"""
+		iExtMode = int(ExtMode)
+		iReadWrite = int(Read)
+		iSlave = c_int(int(SlaveID,16))
+		# Convert address from hex to int to c_int
+		iAddress = c_int(int(Address, 16))
+		# Check Data
+		if Data is None:
+			iData = c_int()
+		else:
+			iData = c_int(int(Data,16))
+		iHalfSpeed = int(HalfSpeed)
+		
+		print("before")
+		print(iData)
+
+		# QLIB_FTM_RFFE_READWRITE_CMD( hResourceContext, iExtMode, iReadWrite, iChannel, iSlave, iAddress, byref(iData), iHalfSpeed)
+		
+		self.qdll.QLIB_FTM_RFFE_READWRITE_CMD( self.g_hResourceContext, iExtMode, iReadWrite, iChannel, iSlave, iAddress, byref(iData), iHalfSpeed)
+		
+		print("after")
+		print(iData)
+		print(iData.value)
+		bOk = True
+		if bool(bOk):
+			return hex(iData.value)[2:]
+		else:
+			return None
+
+	
 if __name__ == "__main__":
 	
 	phone = QCOM_phone()
 	
 	phone.initial_QMSL(bUseQPST)
+	pl = phone.get_phone_port_list()
+	for i in pl: print(i)
 	
+	phone.connect_phone(pl[0])
+	"""
+	phone.set_FTM_mode()
+	
+	#set mode/band
+	eModeId = FTM_MODE_ID_WCDMA
+	eNewMode = PHONE_MODE_WCDMA_IMT
+	#eModeId = FTM_MODE_ID_LTE
+	#eNewMode = PHONE_MODE_LTE_B7
+	phone.set_band(eModeId, eNewMode)
+	"""
+	a = phone.RFFE_readwrite(Read=True, SlaveID="c", Address="1D")
+	print(a)
+	print(type(a))
+	
+	print("...write...")
+	a = phone.RFFE_readwrite(Read=False, SlaveID="c", Address="1", Data='bc')
+	print(a)
+	print(type(a))
+	
+	print("...trigger...")
+	a = phone.RFFE_readwrite(Read=False, SlaveID="c", Address="1c", Data='1')
+	print(a)
+	print(type(a))
+	
+	print("...read...")
+	a = phone.RFFE_readwrite(Read=True, SlaveID="c", Address="1")
+	print(a)
+	print(type(a))
+	
+	phone.disconnect()
+	"""
 	phone.connect_phone(Phone_Com_Port)
 	
 	phone.set_online_mode()
@@ -403,7 +510,7 @@ if __name__ == "__main__":
 	
 	# Disconnect phone
 	phone.disconnect()
-	
+	"""
 	
 
 """
