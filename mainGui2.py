@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainGui2.ui'
 #
-# Created: Wed May 28 21:07:14 2014
+# Created: Thu May 29 11:56:44 2014
 #      by: pyside-uic 0.2.14 running on PySide 1.2.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -183,12 +183,18 @@ class Ui_mainDialog(object):
         self.btnSetGPIB_2 = QtGui.QToolButton(self.groupBoxMisc)
         self.btnSetGPIB_2.setGeometry(QtCore.QRect(160, 60, 41, 21))
         self.btnSetGPIB_2.setObjectName("btnSetGPIB_2")
-        self.btnGetCOM = QtGui.QToolButton(self.groupBoxMisc)
-        self.btnGetCOM.setGeometry(QtCore.QRect(10, 90, 91, 31))
-        self.btnGetCOM.setObjectName("btnGetCOM")
-        self.comboBoxCOM = QtGui.QComboBox(self.groupBoxMisc)
-        self.comboBoxCOM.setGeometry(QtCore.QRect(110, 90, 91, 31))
-        self.comboBoxCOM.setObjectName("comboBoxCOM")
+        self.btnSetCOM = QtGui.QToolButton(self.groupBoxMisc)
+        self.btnSetCOM.setGeometry(QtCore.QRect(160, 90, 41, 21))
+        self.btnSetCOM.setObjectName("btnSetCOM")
+        self.qleCOM = QtGui.QLineEdit(self.groupBoxMisc)
+        self.qleCOM.setGeometry(QtCore.QRect(110, 90, 41, 20))
+        self.qleCOM.setInputMethodHints(QtCore.Qt.ImhNone)
+        self.qleCOM.setMaxLength(3)
+        self.qleCOM.setAlignment(QtCore.Qt.AlignCenter)
+        self.qleCOM.setObjectName("qleCOM")
+        self.qlCOMTitle = QtGui.QLabel(self.groupBoxMisc)
+        self.qlCOMTitle.setGeometry(QtCore.QRect(10, 90, 91, 21))
+        self.qlCOMTitle.setObjectName("qlCOMTitle")
         self.frame_3 = QtGui.QFrame(self.frame)
         self.frame_3.setGeometry(QtCore.QRect(250, 460, 131, 31))
         self.frame_3.setFrameShape(QtGui.QFrame.StyledPanel)
@@ -423,7 +429,10 @@ class Ui_mainDialog(object):
         self.qleGPIB_2.setInputMask(QtGui.QApplication.translate("mainDialog", "000; ", None, QtGui.QApplication.UnicodeUTF8))
         self.qleGPIB_2.setText(QtGui.QApplication.translate("mainDialog", "8", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSetGPIB_2.setText(QtGui.QApplication.translate("mainDialog", "Set", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnGetCOM.setText(QtGui.QApplication.translate("mainDialog", "Phone COM", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnSetCOM.setText(QtGui.QApplication.translate("mainDialog", "Set", None, QtGui.QApplication.UnicodeUTF8))
+        self.qleCOM.setInputMask(QtGui.QApplication.translate("mainDialog", "000; ", None, QtGui.QApplication.UnicodeUTF8))
+        self.qleCOM.setText(QtGui.QApplication.translate("mainDialog", "18", None, QtGui.QApplication.UnicodeUTF8))
+        self.qlCOMTitle.setText(QtGui.QApplication.translate("mainDialog", "Phone COM", None, QtGui.QApplication.UnicodeUTF8))
         self.btnTxOff.setText(QtGui.QApplication.translate("mainDialog", "Tx OFF", None, QtGui.QApplication.UnicodeUTF8))
         self.btnTxOn.setText(QtGui.QApplication.translate("mainDialog", "Tx ON", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("mainDialog", "Channel", None, QtGui.QApplication.UnicodeUTF8))

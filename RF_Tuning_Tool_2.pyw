@@ -85,8 +85,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.btnSetGPIB.clicked.connect(self.setupInstrument)
 		
 		# Get available phone list, then update to Phone COM comboBox
-		self.btnGetCOM.clicked.connect(self.getPhoneCOM)
-		self.comboBoxCOM.activated[unicode].connect(self.setupPhone)
+		self.btnSetCOM.clicked.connect(self.setupPhone)
+		#self.comboBoxCOM.activated[unicode].connect(self.setupPhone)
 
 		
 		# MIPI init
@@ -157,18 +157,18 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		except:
 			self.print_message("Cannot get Phone COM port", bError=True)
 	
-	def setupPhone(self, COM_port):
+	def setupPhone(self):
 		try:
 			print("here")
-			if (COM_port == "Disconnect"):
-				print("dis")
-				self.phone.disconnect()
-			else:
-				Phone_Com_Port = int(COM_port[3:])
-				self.phone.connect_phone(Phone_Com_Port)
-				self.phone.set_online_mode()
-				self.phone.set_FTM_mode()
-				self.print_message("Set FTM mode ok")
+			# initial phone
+			self.phone = QCOM_phone()
+			self.phone.initial_QMSL(bUseQPST)
+			
+			Phone_Com_Port = int(self.qleCOM.text())
+			self.phone.connect_phone(Phone_Com_Port)
+			self.phone.set_online_mode()
+			self.phone.set_FTM_mode()
+			self.print_message("Set FTM mode ok")
 		except Error as e:
 			self.print_message("Set FTM mode error", bError=True)
 			print("error({0}): {1}".format(e.errno, e.strerror))
