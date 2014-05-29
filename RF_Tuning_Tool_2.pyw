@@ -788,7 +788,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 					level -= 5
 					self.callbox.set_UL_power_FTM(level)
 				else:
-					self.callbox.set_UL_power_FTM(int(self.txp))
+					level = int(self.txp)
+					self.callbox.set_UL_power_FTM(level)
 				self.callbox.init_LTE_TXP_ACLR()
 				self.txp = self.callbox.read_LTE_TXP()
 				self.aclr = self.callbox.read_LTE_ACLR()
@@ -814,7 +815,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 					level -= 5
 					self.callbox.set_UL_power_FTM(level)
 				else:
-					self.callbox.set_UL_power_FTM(int(self.txp))
+					level = int(self.txp)
+					self.callbox.set_UL_power_FTM(level)
 				self.callbox.init_LTE_TXP_ACLR()
 				self.txp = self.callbox.read_LTE_TXP()
 				self.aclr = self.callbox.read_LTE_ACLR()
