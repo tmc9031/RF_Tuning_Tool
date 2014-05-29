@@ -32,12 +32,19 @@ class PS_GW_PPT1830(Instrument):
 		s = self.ask("*IDN?")
 		return s
 		
-	def read_current(self):
+	def read_current(self, count=10):
 		"""
-			return output current in float
+			return output current in mA (int)
 		"""
-		s = self.ask("MEASure:CURRent?")
-		return float(s)
+		current = 0
+		for i in range(count):
+			temp = float(self.ask("MEASure:CURRent?"))
+			current += temp
+			#print("current:{0}".format(temp))
+		
+		current = int(current/count*1000)
+		
+		return current
 	
 		
 if __name__ == "__main__":
@@ -49,7 +56,17 @@ if __name__ == "__main__":
 	
 	print(power_supply.identity())
 	
-	print("current:{0}".format(power_supply.read_current()))
+	a = 0
 	
+	print("average:{0}".format(power_supply.read_current()))
+	"""
+	for i in range(10):
+		current = power_supply.read_current()
+		a += current
+		print("current:{0}".format(current))
+	
+	print("average:{0:.3f}".format(a/10))
+	print("average:{0}".format(a/10))
+	"""
 	
 	

@@ -16,6 +16,8 @@ from WCDMA_attributes import *
 from QCOM import *
 from Agilent8960 import *
 from Anritsu8820C import *
+from PS_GW_PPT1830 import *
+
 
 import mainGui2
 
@@ -43,6 +45,9 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 	MIPI_ch = None
 	MIPI_slave_ID = None	
 	ICQ_value = None
+	
+	power_supply = None
+	current = None
 	
 	# for tableWidget
 	current_edit_row = -1
@@ -111,10 +116,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		# PA range signal
 		self.btnSetPARange.clicked.connect(self.setPARange)
 		
-		
-		# Setup instrument and phone
-		#self.setupInstrument()
-		#self.setupPhone()
+		# Power supply
+		self.btnSetGPIB_2.clicked.connect(self.setPowerSupply)
 		
 		
 		
@@ -137,6 +140,21 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.callbox.timeout = 10
 		except:
 			self.print_message("Callbox error! Please Check GPIB Address.", bError=True)
+	
+	def setPowerSupply(self):
+		try:
+			print("set power supply")
+			print("GPIB::{0}".format(int(self.qleGPIB_2.text())))
+			self.power_supply = PS_GW_PPT1830("GPIB::{0}".format(int(self.qleGPIB_2.text())))
+			s = self.power_supply.identity()
+			if not("GOOD WILL;PPT-1830;" in s):
+				self.power_supply = None
+				self.print_message("Power supply NOT supported", bError=True)
+			else:
+				self.print_message(s)
+		except Error as e:
+			self.print_message("Power Supply error! Please check GPIB address.", bError=True)
+			print(e)
 	
 	def getPhoneCOM(self):
 		"""
@@ -721,9 +739,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		# Set PDM
 		self.phone.set_LTE_PDM(self.PDM)
 		# read ICQ
-		if self.MIPI_slave_ID is None:
-			self.print_message("PA Slave ID is not available.")
-		else:
+		if not(self.MIPI_slave_ID is None):
 			self.readICQ()
 		
 	def set_phone_WCDMA_on(self):
@@ -744,9 +760,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		# Set PDM
 		self.phone.set_PDM(self.PDM)
 		# read ICQ
-		if self.MIPI_slave_ID is None:
-			self.print_message("PA Slave ID is not available.")
-		else:
+		if not(self.MIPI_slave_ID is None):
 			self.readICQ()
 		
 	def set_phone_GSM_on(self):
@@ -833,6 +847,9 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			#read tx power
 			self.txp = self.callbox.read_GSM_power()
 		
+		# current
+		if not(self.power_supply is None):
+			self.current = self.power_supply.read_current()
 		
 	def print_message(self, param, bError=False):
 		if (bError):
@@ -892,6 +909,10 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				self.tableWidget.setItem((self.current_edit_row), 11, itemICQ)
 				self.print_message("")
 			
+			if not(self.power_supply is None):
+				itemCurrent = QTableWidgetItem(unicode(self.current))
+				self.tableWidget.setItem((self.current_edit_row), 3, itemCurrent)
+				self.print_message("")
 			
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			print("current row: {0}".format(self.current_edit_row))
@@ -923,6 +944,11 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			if not(self.ICQ_value is None):
 				itemICQ = QTableWidgetItem(unicode(self.ICQ_value.upper()))
 				self.tableWidget.setItem((self.current_edit_row), 9, itemICQ)
+				self.print_message("")
+				
+			if not(self.power_supply is None):
+				itemCurrent = QTableWidgetItem(unicode(self.current))
+				self.tableWidget.setItem((self.current_edit_row), 3, itemCurrent)
 				self.print_message("")
 			
 		elif self.comboBoxTech.currentText() == "GSM":
