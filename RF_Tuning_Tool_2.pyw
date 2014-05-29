@@ -721,7 +721,10 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		# Set PDM
 		self.phone.set_LTE_PDM(self.PDM)
 		# read ICQ
-		self.readICQ()
+		if self.MIPI_slave_ID is None:
+			self.print_message("PA Slave ID is not available.")
+		else:
+			self.readICQ()
 		
 	def set_phone_WCDMA_on(self):
 		print("set phone wcdma on")
@@ -741,7 +744,10 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		# Set PDM
 		self.phone.set_PDM(self.PDM)
 		# read ICQ
-		self.readICQ()
+		if self.MIPI_slave_ID is None:
+			self.print_message("PA Slave ID is not available.")
+		else:
+			self.readICQ()
 		
 	def set_phone_GSM_on(self):
 		print("set phone GSM on")
