@@ -62,6 +62,10 @@ File Description
 		<td>WCDMA.py</td>
 		<td>Link mode auto test tool for TxP/sensitivity</td>
 	</tr>
+	<tr>
+		<td>PS_GW_PPT1830.py</td>
+		<td>Warp of Power Supply Good Will PPT-1830</td>
+	</tr>
 </table>
 
 Supported Device
