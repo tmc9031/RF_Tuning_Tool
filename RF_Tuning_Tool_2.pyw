@@ -890,6 +890,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			if not(self.ICQ_value is None):
 				itemICQ = QTableWidgetItem(unicode(self.ICQ_value.upper()))
 				self.tableWidget.setItem((self.current_edit_row), 11, itemICQ)
+				self.print_message("")
 			
 			
 		elif self.comboBoxTech.currentText() == "WCDMA":
@@ -922,6 +923,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			if not(self.ICQ_value is None):
 				itemICQ = QTableWidgetItem(unicode(self.ICQ_value.upper()))
 				self.tableWidget.setItem((self.current_edit_row), 9, itemICQ)
+				self.print_message("")
 			
 		elif self.comboBoxTech.currentText() == "GSM":
 			print("current row: {0}".format(self.current_edit_row))
