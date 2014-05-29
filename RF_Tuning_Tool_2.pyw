@@ -823,9 +823,9 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				else:
 					level = int(self.txp)
 					self.callbox.set_UL_power_FTM(level)
-				self.callbox.init_LTE_TXP_ACLR()
-				self.txp = self.callbox.read_LTE_TXP()
-				self.aclr = self.callbox.read_LTE_ACLR()
+				self.callbox.init_TXP_ACLR()
+				self.txp = self.callbox.read_TXP()
+				self.aclr = self.callbox.read_ACLR()
 			
 		elif self.comboBoxTech.currentText() == "GSM":
 			# Sweep for GSM
