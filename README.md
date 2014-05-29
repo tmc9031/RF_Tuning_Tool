@@ -73,7 +73,7 @@ Supported Device
 
 - Qualcomm based phone
 - Callbox: Anritsu 8820C and Agilent 8960
-
+- Power Supply: Good Will PPT-1830
 
 Requirement
 -----------
