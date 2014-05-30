@@ -64,7 +64,7 @@ File Description
 	</tr>
 	<tr>
 		<td>PS_GW_PPT1830.py</td>
-		<td>Warp of Power Supply Good Will PPT-1830</td>
+		<td>Wrap of Power Supply Good Will PPT-1830</td>
 	</tr>
 </table>
 
