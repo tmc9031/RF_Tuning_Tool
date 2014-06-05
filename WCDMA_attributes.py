@@ -123,6 +123,20 @@ GSM_PCS_UL_ch = GSM_PCS_DL_ch
 GSM_Band_DL_ch_map = dict(EGSM=GSM_EGSM_DL_ch, GSM850=GSM_GSM850_DL_ch, DCS=GSM_DCS_DL_ch, PCS=GSM_PCS_DL_ch)
 GSM_Band_UL_ch_map = GSM_Band_DL_ch_map
 
+
+# C2k attributes
+# channel list
+CDMA_BC0_DL_ch = [1013, 384, 777]
+CDMA_BC0_UL_ch = CDMA_BC0_DL_ch
+CDMA_BC1_DL_ch = [25, 600, 1175]
+CDMA_BC1_UL_ch = CDMA_BC1_DL_ch
+CDMA_BC10_DL_ch = [476, 562, 684]
+CDMA_BC10_UL_ch = CDMA_BC10_DL_ch
+
+# band-channel mapping
+CDMA_Band_DL_ch_map = dict(BC0=CDMA_BC0_DL_ch, BC1=CDMA_BC1_DL_ch, BC10=CDMA_BC10_DL_ch)
+CDMA_Band_UL_ch_map = CDMA_Band_DL_ch_map
+					
 					
 # Below is QMSL defined variable
 # Just copy from QLib_Defines.h. It should be better way to include or reference, but I don't know at this moment.
@@ -195,6 +209,7 @@ FTM_MODE_ID_LTM         = 0x8001	# LTM
 
 # For FTM Mode/Band setting
 PHONE_MODE_FM        = 1      #(FM)
+PHONE_MODE_SLEEP 	 = 2	  #(Sleep Mode)
 PHONE_MODE_GPS       = 3      #(GPS)
 PHONE_MODE_GPS_SINAD = 4      #(GPS SINAD)
 PHONE_MODE_CDMA_800  = 5      #(CDMA 800)
@@ -203,6 +218,9 @@ PHONE_MODE_CDMA_1800 = 8      #(CDMA 1800)
 PHONE_MODE_J_CDMA    = 14     #(JCDMA)
 PHONE_MODE_CDMA_450  = 17     #(CDMA 450)
 PHONE_MODE_CDMA_IMT  = 19     #(CDMA IMT)
+PHONE_MODE_CDMA_1900_EXT = 26 # Secndary CDMA 1900MHz Band, Band Class 14
+PHONE_MODE_CDMA_450_EXT = 27  # CDMA BC 11 (450 Extension)
+PHONE_MODE_CDMA_800_SEC = 33  # Secondary CDMA 800MHz Band, Band Class 10
 
 PHONE_MODE_WCDMA_IMT   =9      #(WCDMA IMT, Band I)
 PHONE_MODE_GSM_900     =10     #(GSM 900)
@@ -298,6 +316,7 @@ LTE_Band_QMSL_map = dict(B1=PHONE_MODE_LTE_B1, B2=PHONE_MODE_LTE_B2, B3=PHONE_MO
 					B19=PHONE_MODE_LTE_B19, B20=PHONE_MODE_LTE_B20, B21=PHONE_MODE_LTE_B21,
 					B26=PHONE_MODE_LTE_B26, B281=PHONE_MODE_LTE_B28, B282=PHONE_MODE_LTE_B28)
 GSM_Band_QMSL_map = dict(EGSM=PHONE_MODE_GSM_900, GSM850=PHONE_MODE_GSM_850, DCS=PHONE_MODE_GSM_1800, PCS=PHONE_MODE_GSM_1900)
+CDMA_Band_QMSL_map = dict(BC0=PHONE_MODE_CDMA_800, BC1=PHONE_MODE_CDMA_1900, BC10=PHONE_MODE_CDMA_800_SEC)				
 				
 #Anritsu 8820C CALL Status
 ANRITSU_OFF = 0		#Call processing function set to Off
