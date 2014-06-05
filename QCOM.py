@@ -387,6 +387,31 @@ class QCOM_phone:
 		if (bool(bOK) == False): 
 			print("Set GSM Linear RGI {0}: {1}".format(iRgiIndex, pass_dict[bool(bOK)]))
 
+	def set_CDMA_TRK_LO(self, iPDMvalue = 0):
+		"""
+		WCDMA mode values
+		2 - Tx AGC Adjust PDM
+		4 - Trk Lo Adjust PDM
+
+		GSM mode values
+		0 - Trk Lo Adjust PDM
+
+		CDMA mode values
+		2 - Tx AGC Adjust PDM
+		4 - Trk Lo Adjust PDM
+		"""
+		iPDMtype = 4	# Trk Lo Adjust PDM
+		bOK = self.qdll.QLIB_FTM_SET_PDM(self.g_hResourceContext, iPDMtype, iPDMvalue)  
+		if (bool(bOK) == False): 
+			print("Set CDMA Trk Lo Adjust PDM value {0}: {1}".format(iPDMvalue, pass_dict[bool(bOK)]))
+
+	def set_CDMA_TX_waveform(self):
+		# Set CDMA waveform (it's the same function as WCDMA)
+		if (bSet_CDMA_Waveform == 1):
+			bSelectCW = 0 	# Set 0 for de-select CW 
+			bOK = self.qdll.QLIB_FTM_CDMA_CW_WAVEFORM(self.g_hResourceContext,bSelectCW)
+			if (bool(bOK) == False): 
+				print("Set CDMA waveform: {0}".format(pass_dict[bool(bOK)]))	
 	
 	def RFFE_readwrite(self, Read, SlaveID, Address, Data=None, ExtMode=False, iChannel=0, HalfSpeed=False):
 		"""

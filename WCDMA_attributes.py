@@ -15,6 +15,7 @@ Integrity = 1			# Integrity ON|OFF
 bUseQPST = 1			# bUseQPST = true to use QPST, FALSE to use QPHONEMS 
 Phone_Com_Port = 15		# Phone COM port
 bSet_WCDMA_Waveform = 0	# For GLU(MSM8974),  not to set WCDMA waveform
+bSet_CDMA_Waveform = 1	# Reserve this parameter
 PDM_init = 88			# Start PDM (High gain mode default PDM) (RTR6285:210, WTR1605:90)
 PDM_low = 50			# PDM for -20dBm (Low gain mode PDM) (RTR6285:140, WTR1605:60)
 PDM_max = 255			# PDM Max (RTR6285:255, WTR1605:127)
