@@ -57,7 +57,7 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		self.setupUi(self)
 		
 		
-		self.comboBoxTech.addItems(("LTE", "WCDMA", "GSM"))
+		self.comboBoxTech.addItems(("LTE", "WCDMA", "GSM", "C2k"))
 		self.comboBoxTech.activated[unicode].connect(self.comboBoxTechSelected)
 		self.comboBoxBand.activated[unicode].connect(self.comboBoxBandSelected)
 		
@@ -207,6 +207,10 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				self.comboBoxBand.clear()
 				self.comboBoxBand.addItems(sorted(GSM_Band_QMSL_map.keys()))
 				self.qlBW.setText("--")
+			elif tech == "C2k":
+				self.comboBoxBand.clear()
+				self.comboBoxBand.addItems(sorted(CDMA_Band_QMSL_map.keys(), key=lambda x: int(x[2:])))
+				self.qlBW.setText("--")
 			else:
 				QMessageBox.warning(self, "Error", "comboBoxTech Error")
 			self.print_title()
@@ -317,6 +321,44 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.eNewMode = GSM_Band_QMSL_map[self.test_band]
 			self.set_phone_GSM_on()
 			
+		elif self.comboBoxTech.currentText() == "C2k":
+			"""
+				Need to modify and check
+			"""
+			# Set Variable values
+			self.test_band = band
+			self.UL_ch = CDMA_Band_UL_ch_map[self.test_band][1]
+			# Set PA range
+			if (self.test_band in PA_range_map):
+				self.PArange = PA_range_map[self.test_band][0]
+			else:
+				self.PArange = iPArange_high
+				self.qlePARange.setText(unicode(self.PArange))
+			self.btnHPM.setChecked(True)
+			#switch Instrument to C2k mode
+			if (self.callbox.switch_to_WCDMA() == 1):
+				self.print_message("<font color=red> Switch Instrument format fail.</color>")
+				sys.exit()
+			#preset instrument
+			self.callbox.preset()
+			self.callbox.update_path_loss()
+			# Set FDD test mode
+			self.callbox.set_FDD_test_mode()
+			# Set UL channel
+			self.callbox.set_FDD_UL_channel(self.UL_ch)
+			self.displayChannel()
+			# Setup TxP and ACLR setting
+			self.callbox.setup_channel_power_mea(Average_times, "OFF")	#Tx power measurement setting
+			self.callbox.setup_ACLR_mea(count = Average_times)			#ACLR measurement setting
+			self.callbox.set_UL_power_FTM(23)							#set 8960 UL power
+			
+			# Phone setting
+			self.eModeId = FTM_MODE_ID_WCDMA
+			self.eNewMode = Band_QMSL_map[self.test_band]
+			self.set_phone_WCDMA_on()
+			self.qlePDM.setText(unicode(self.PDM))
+			# Set SMPS
+			self.set_SMPS()
 		
 		# measure one time
 		self.measure()
