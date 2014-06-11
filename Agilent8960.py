@@ -41,7 +41,7 @@ class Agilent8960(Instrument):
 		if s == "\"WCDMA\"":
 			print("Already WCDMA mode")
 			return 0
-		elif s == "\"GSM/GPRS\"":
+		else:
 			self.write("SYST:APPL:FORM 'WCDMA'")		#switch to WCDMA
 			time.sleep(1)
 			if (self.ask("SYST:APPL:FORMat?") == "\"WCDMA\""):
@@ -50,9 +50,7 @@ class Agilent8960(Instrument):
 			else:
 				print("Switch to WCDMA mode fail")
 				return 1
-		else:
-			print("Switch to WCDMA mode fail")
-			return 1
+		
 	
 	def switch_to_GSM(self):
 		"""
@@ -67,7 +65,7 @@ class Agilent8960(Instrument):
 		if s == "\"GSM/GPRS\"":
 			print("Already GSM/GPRS mode")
 			return 0
-		elif s == "\"WCDMA\"":
+		else:
 			self.write("SYST:APPL:FORM 'GSM/GPRS'")		#switch to GSM
 			time.sleep(1)
 			if (self.ask("SYST:APPL:FORMat?") == "\"GSM/GPRS\""):
@@ -76,9 +74,31 @@ class Agilent8960(Instrument):
 			else:
 				print("Switch to GSM mode fail")
 				return 1
+		
+	
+	def switch_to_C2k(self):
+		"""
+			switch to CDMA2000 mode
+			switch ok => return 0
+			switch fail => return 1
+		"""
+		s = self.ask("SYSTem:APPL?")	#ask application
+		print("System application: "+s)
+		s = self.ask("SYST:APPL:FORMat?")	#WCDMA|GSM/GPRS
+		print("Current Format: "+s)
+		if s == "\"IS-2000/IS-95/AMPS\"":
+			print("Already C2k mode")
+			return 0
 		else:
-			print("Switch to GSM mode fail")
-			return 1
+			self.write("SYST:APPL:FORM 'IS-2000/IS-95/AMPS'")		#switch to CDMA
+			time.sleep(1)
+			if (self.ask("SYST:APPL:FORMat?") == "\"IS-2000/IS-95/AMPS\""):
+				print("Switch to C2k mode OK")
+				return 0
+			else:
+				print("Switch to C2k mode fail")
+				return 1
+		
 	
 	def preset(self):
 		"""
@@ -135,6 +155,7 @@ class Agilent8960(Instrument):
 		"""
 			GSM: BCH+TCH mode
 			WCDMA: FDD Test mode
+			C2k: Active Cell
 		"""
 		s = self.ask("SYST:APPL:FORMat?")	#WCDMA|GSM/GPRS
 		if s == "\"GSM/GPRS\"":
@@ -143,6 +164,9 @@ class Agilent8960(Instrument):
 		elif s == "\"WCDMA\"":
 			# Set 8960 to FDD test mode for WCDMA
 			self.write("CALL:OPER:MODE FDDT")	#CALL|CW|FDDT|OFF
+		elif s == "\"IS-2000/IS-95/AMPS\"":
+			# Set 8960 to Active Cell mode for C2k (need to check)
+			self.write("CALL:OPER:MODE CALL")	#AVCTest|CALL|D2KTest|CW|OFF
 		else:
 			print("Set FDD test mode fail")
 	
@@ -558,10 +582,11 @@ if __name__ == "__main__":
 	"""
 
 	#switch to WCDMA mode
-	if (agilent.switch_to_WCDMA() == 1):
+	if (agilent.switch_to_C2k() == 1):
 		print("switch format fail")
 		exit()
 
+	
 	#preset instrument
 	agilent.preset()
 	print("preset")
@@ -571,7 +596,9 @@ if __name__ == "__main__":
 	agilent.update_path_loss()
 	print("path loss")
 
-
+	agilent.set_FDD_test_mode()
+	
+	"""
 	#set call parameters
 	agilent.update_link_settings()
 	#IMSI = '001010123456789'
@@ -595,4 +622,4 @@ if __name__ == "__main__":
 
 	#agilent.sweep_LMH_Txp_ACLR("B2")
 	agilent.sweep_LMH_BER_search("B2", count=15000, start=-108, step=0.5, target=0.1)
-
+	"""
