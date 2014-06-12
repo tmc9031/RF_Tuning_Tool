@@ -155,7 +155,7 @@ class Agilent8960(Instrument):
 		"""
 			GSM: BCH+TCH mode
 			WCDMA: FDD Test mode
-			C2k: Active Cell
+			C2k: IS-2000 Test mode
 		"""
 		s = self.ask("SYST:APPL:FORMat?")	#WCDMA|GSM/GPRS
 		if s == "\"GSM/GPRS\"":
@@ -165,8 +165,8 @@ class Agilent8960(Instrument):
 			# Set 8960 to FDD test mode for WCDMA
 			self.write("CALL:OPER:MODE FDDT")	#CALL|CW|FDDT|OFF
 		elif s == "\"IS-2000/IS-95/AMPS\"":
-			# Set 8960 to Active Cell mode for C2k (need to check)
-			self.write("CALL:OPER:MODE CALL")	#AVCTest|CALL|D2KTest|CW|OFF
+			# Set 8960 to IS-2000 Test mode for C2k (same result as Active Cell)
+			self.write("CALL:OPER:MODE D2KT")	#AVCTest|CALL|D2KTest|CW|OFF
 		else:
 			print("Set FDD test mode fail")
 	
@@ -174,10 +174,15 @@ class Agilent8960(Instrument):
 		"""
 			Use this function only in FDD test mode
 		"""
-		#set UL chan atuo OFF
-		self.write("CALL:UPL:CHAN:CONT:AUTO OFF")	#1|ON|0|OFF
-		s = "CALL:UPL:CHAN:CHAN "+str(UL_ch)	# set UL ch
-		self.write(s)
+		s = self.ask("SYST:APPL:FORMat?")
+		if s == "\"WCDMA\"":
+			#set UL chan atuo OFF
+			self.write("CALL:UPL:CHAN:CONT:AUTO OFF")	#1|ON|0|OFF
+			s1 = "CALL:UPL:CHAN:CHAN "+str(UL_ch)	# set UL ch
+			self.write(s1)
+		elif s == "\"IS-2000/IS-95/AMPS\"":
+			self.set_C2k_FTM_channel(UL_ch)
+		
 	
 	def set_IMSI(self, IMSI):
 		#set IMSI
@@ -227,8 +232,11 @@ class Agilent8960(Instrument):
 		"""
 			get UL power (callbox setting)
 		"""
-		s = self.ask("CALL:MS:POW:TARG?")
-		UL_level = Decimal(s)
+		s = self.ask("SYST:APPL:FORMat?")
+		if s == "\"WCDMA\"":
+			UL_level = Decimal(self.ask("CALL:MS:POW:TARG?"))
+		elif s == "\"IS-2000/IS-95/AMPS\"":
+			UL_level = Decimal(self.ask("RFANalyzer:MANual:POWer?"))
 		return UL_level
 	
 	def set_all_up_bit(self):
@@ -283,7 +291,7 @@ class Agilent8960(Instrument):
 		#Tx power setting
 		#agilent.write("SET:WCP:COUN:STAT ON")	#multi measurement ON
 		self.write("SET:WCP:CONT OFF")	#Measure Single
-		self.write("SET:WCP:TIM 1S")	#set time-out 1S in case the measurement cannot be made
+		self.write("SET:WCP:TIM 10S")	#set time-out 10S in case the measurement cannot be made
 		s = "SET:WCP:COUN "+str(count)	#multi-measurement ON and set measure count
 		self.write(s)	
 		self.write("SET:WCP:INTerval:TIME 666.7US")	#measurement interval for 1 timeslot (666.7us)
@@ -298,7 +306,7 @@ class Agilent8960(Instrument):
 		"""
 		#ACLR setting
 		self.write("SET:WACL:CONT OFF")
-		self.write("SET:WACL:TIM 3S")	#set time-out 1S in case the measurement cannot be made
+		self.write("SET:WACL:TIM 10S")	#set time-out 10S in case the measurement cannot be made
 		s = "SET:WACL:COUN "+str(count)
 		self.write(s)	#multi-measurement ON and count = 10
 		self.write("SET:WACL:TRIGger:SOURce AUTO")	#set trigger source auto
@@ -568,7 +576,135 @@ class Agilent8960(Instrument):
 		else:
 			print("Tx Power integrity fail: "+str(Integrity))
 			return Txp		
-		
+	
+
+	def set_C2k_band(self, band):
+		"""
+			Set C2k TCH band
+			CALL:BAND
+			Range: IMT2000|JCDMa|KPCS |NMT450|CELLular700|SECondary800|USCellular|USPCs|USPCs1900|AWService|PAMR400 |
+					PAMR800 | PSAFety700 |CLOWer700 | TACS | DCS1800 | CCELlular | IMT2500 | US2500 |USFLink2500
+		"""
+		if band == "BC0":
+			self.write("CALL:BAND USC")
+		elif band == "BC1":
+			self.write("CALL:BAND USPC")
+		elif band == "BC10":
+			self.write("CALL:BAND SEC800")
+
+	def set_C2k_FTM_channel(self, ch):
+		"""
+			Set C2k channel
+			CALL:CHAN
+		"""
+		s = "CALL:CHAN "+str(ch)	# set UL ch
+		self.write(s)
+	
+	def	set_C2k_UL_power_FTM(self, UL_power):
+		"""
+			Set C2k UL Tx power for tuning
+			Set "Recv Power Ctrl" to Manual
+			Then set "Receiver Power"
+		"""
+		self.write("RFANalyzer:CONTrol:POWer:AUTO 0")	# Range: 1|ON|0|OFF
+		s = "RFANalyzer:MANual:POWer "+str(UL_power)
+		self.write(s)
+	
+	def set_C2k_RC(self, RC="F1R1"):
+		"""
+			Set C2k Radio Config
+			Range: F1R1|F2R2|F3R3|F4R3|F5R4|F11R8
+			Use F1R1 as default
+		"""
+		self.write("CALL:RCONfig "+RC)
+	
+	def setup_C2k_channel_power_mea(self, count = 20):
+		"""
+			C2k channel power measurement settings
+			count: measure count
+		"""
+		#Tx power setting
+		self.write("SET:CPOW:CONT OFF")	#Measure Single
+		self.write("SET:CPOW:TIM 10S")	#set time-out 10S in case the measurement cannot be made
+		s = "SET:CPOW:COUN "+str(count)	#multi-measurement ON and set measure count
+		self.write(s)	
+
+	def setup_C2k_ACLR_mea(self, count = 10):
+		"""
+			C2k Tx Spurious Emissions measurement settings
+			count: measure count
+			set default count to 10, 20 times is too slow
+		"""
+		#ACLR setting
+		self.write("SET:CTXS:CONT OFF")
+		self.write("SET:CTXS:TIM 10S")	#set time-out 10S in case the measurement cannot be made
+		s = "SET:CTXS:COUN "+str(count)
+		self.write(s)	#multi-measurement ON and count = 10
+	
+	def init_C2k_TXP_ACLR(self):
+		self.write("INIT:CPOW;CTXS")
+	
+	def init_C2k_TXP(self):
+		self.write("INIT:CPOW")
+	
+	def init_C2k_ACLR(self):
+		self.write("INIT:CTXS")
+	
+	def read_C2k_TXP(self):
+		"""
+			read C2k channel power measurement
+			if integrity is fail, return tx power and print error message
+			if integrity is ok, return tx power in Decimal()
+			
+			"FETC:CPOW?" data format
+			+0,+4.21111100E-001
+			int, channel power
+		"""
+		#read tx power
+		s = self.ask("FETC:CPOW?")
+		s = s.split(",")
+		Integrity = int(s[0])
+		Txp = Decimal(s[1])
+		if not Integrity:
+			#print("Integrity ok")
+			#print("Tx Power:"+str(Txp))
+			return Txp
+		elif Integrity == 5:	# Over Range
+			print("Tx Power over range, integrity: "+str(Integrity))
+			return 999999		# temp solution, 8960 still get a value if over range, translate to 8820c type of value
+		elif Integrity == 6:	# Under Range
+			print("Tx Power under range, integrity: "+str(Integrity))
+			return -999999		# temp solution, 8960 still get a value if under range, return a very small value for distinction
+		else:
+			print("Tx Power integrity fail: "+str(Integrity))
+			return Txp
+
+	def read_C2k_ACLR(self):
+		"""
+			read C2k ACLR measurement (average)
+			if integrity is fail, return ACLR and print error message
+			if integrity is ok, return ACLR in [-0.885MHz, +5MHz, -10MHz, +10MHz] fromat
+			
+			Reading format:
+			"FETC:CTXS?" (average)
+			+0,+0.00000000E+000,-5.30425600E+001,-5.38219900E+001,-6.54417000E+001,-6.31073600E+001
+			int, 0/PASS/1/FAIL, -0.885MHz, +0.885MHz, -1.980MHz, +1.980MHz
+		"""
+		#check ACLR integrity
+		s = self.ask("FETC:CTXS?")
+		s = s.split(",")
+		Integrity = int(s[0])
+		s = s[2:]
+		ACLR = []
+		for value in s:
+			#ACLR.append((Decimal(value)).quantize(Decimal('.01')))
+			ACLR.append((Decimal(value)))
+		if not Integrity:
+			return ACLR
+		else:
+			print("ALCR integrity fail: "+str(Integrity))
+			return ACLR
+	
 if __name__ == "__main__":
 	
 	#get instrument
@@ -597,6 +733,19 @@ if __name__ == "__main__":
 	print("path loss")
 
 	agilent.set_FDD_test_mode()
+	
+	agilent.set_C2k_band("BC0")
+	agilent.set_C2k_FTM_channel(384)
+	agilent.set_C2k_UL_power_FTM(23)
+	agilent.set_C2k_RC()
+	
+	agilent.setup_C2k_channel_power_mea()
+	agilent.setup_C2k_ACLR_mea()
+	agilent.init_C2k_TXP_ACLR()
+	txp = agilent.read_C2k_TXP()
+	aclr = agilent.read_C2k_ACLR()
+	print("txp"+str(txp))
+	print("aclr"+str(aclr))
 	
 	"""
 	#set call parameters

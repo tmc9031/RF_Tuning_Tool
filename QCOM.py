@@ -195,7 +195,7 @@ class QCOM_phone:
 			print("Set Tx ON: {0}".format(pass_dict[bool(bOK)]))
 		
 	def set_waveform(self):
-		# Set WCDMA waveform
+		# Set WCDMA/C2k waveform
 		if (bSet_WCDMA_Waveform == 1):
 			bSelectCW = 0 	# Set 0 for de-select CW 
 			bOK = self.qdll.QLIB_FTM_CDMA_CW_WAVEFORM(self.g_hResourceContext,bSelectCW)

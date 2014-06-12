@@ -336,26 +336,28 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				self.qlePARange.setText(unicode(self.PArange))
 			self.btnHPM.setChecked(True)
 			#switch Instrument to C2k mode
-			if (self.callbox.switch_to_WCDMA() == 1):
+			if (self.callbox.switch_to_C2k() == 1):
 				self.print_message("<font color=red> Switch Instrument format fail.</color>")
 				sys.exit()
 			#preset instrument
 			self.callbox.preset()
 			self.callbox.update_path_loss()
-			# Set FDD test mode
+			# Set FDD test mode and RC1
 			self.callbox.set_FDD_test_mode()
+			self.callbox.set_C2k_RC()
 			# Set UL channel
+			self.callbox.set_C2k_band(self.test_band)
 			self.callbox.set_FDD_UL_channel(self.UL_ch)
 			self.displayChannel()
 			# Setup TxP and ACLR setting
-			self.callbox.setup_channel_power_mea(Average_times, "OFF")	#Tx power measurement setting
-			self.callbox.setup_ACLR_mea(count = Average_times)			#ACLR measurement setting
-			self.callbox.set_UL_power_FTM(23)							#set 8960 UL power
+			self.callbox.setup_C2k_channel_power_mea(Average_times)	#Tx power measurement setting
+			self.callbox.setup_C2k_ACLR_mea()			#ACLR measurement setting
+			self.callbox.set_C2k_UL_power_FTM(24)		#set 8960 UL power
 			
 			# Phone setting
-			self.eModeId = FTM_MODE_ID_WCDMA
-			self.eNewMode = Band_QMSL_map[self.test_band]
-			self.set_phone_WCDMA_on()
+			self.eModeId = FTM_MODE_ID_CDMA_1X
+			self.eNewMode = CDMA_Band_QMSL_map[self.test_band]
+			self.set_phone_C2k_on()
 			self.qlePDM.setText(unicode(self.PDM))
 			# Set SMPS
 			self.set_SMPS()
@@ -455,6 +457,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 				ch_list = LTE_Band_UL_ch_map_5M[self.test_band]
 			elif self.comboBoxTech.currentText() == "WCDMA":
 				ch_list = Band_UL_ch_map[self.test_band]
+			elif self.comboBoxTech.currentText() == "C2k":
+				ch_list = CDMA_Band_UL_ch_map[self.test_band]
 			
 			PDM_start = 0
 			PDM_end = 0
@@ -475,6 +479,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 					self.set_phone_LTE_on()
 				elif self.comboBoxTech.currentText() == "WCDMA":
 					self.set_phone_WCDMA_on()
+				elif self.comboBoxTech.currentText() == "C2k":
+					self.set_phone_C2k_on()
 				self.btnTxOn.setChecked(True)
 				# Set SMPS
 				self.set_SMPS()
@@ -483,6 +489,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 					if self.comboBoxTech.currentText() == "LTE":
 						self.phone.set_LTE_PDM(self.PDM)
 					elif self.comboBoxTech.currentText() == "WCDMA":
+						self.phone.set_PDM(self.PDM)
+					elif self.comboBoxTech.currentText() == "C2k":
 						self.phone.set_PDM(self.PDM)
 					self.qlePDM.setText(unicode(self.PDM))
 					self.measure()
@@ -526,6 +534,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.set_phone_LTE_on()
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			self.set_phone_WCDMA_on()
+		elif self.comboBoxTech.currentText() == "C2k":
+			self.set_phone_C2k_on()
 		# Set SMPS
 		self.set_SMPS()
 		self.measure()
@@ -549,6 +559,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.set_phone_LTE_on()
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			self.set_phone_WCDMA_on()
+		elif self.comboBoxTech.currentText() == "C2k":
+			self.set_phone_C2k_on()
 		# Set SMPS
 		self.set_SMPS()
 		self.callbox.set_UL_power_FTM(-20)		# Set 8960 UL power
@@ -563,6 +575,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.set_phone_LTE_on()
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			self.set_phone_WCDMA_on()
+		elif self.comboBoxTech.currentText() == "C2k":
+			self.set_phone_C2k_on()
 		# Set SMPS
 		self.set_SMPS()
 		#self.callbox.set_UL_power_FTM(-20)		# Set 8960 UL power
@@ -578,6 +592,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.set_phone_WCDMA_on()
 		elif self.comboBoxTech.currentText() == "GSM":
 			self.set_phone_GSM_on()
+		elif self.comboBoxTech.currentText() == "C2k":
+			self.set_phone_C2k_on()
 		self.qlePDM.setText(unicode(self.PDM))
 		# Set SMPS
 		self.set_SMPS()
@@ -601,6 +617,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.phone.set_LTE_PDM(self.PDM)
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			self.phone.set_PDM(self.PDM)
+		elif self.comboBoxTech.currentText() == "C2k":
+			self.phone.set_PDM(self.PDM)
 		self.qlePDM.setText(unicode(self.PDM))
 		self.measure()
 		self.print_result()
@@ -614,6 +632,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		if self.comboBoxTech.currentText() == "LTE":
 			self.phone.set_LTE_PDM(self.PDM)
 		elif self.comboBoxTech.currentText() == "WCDMA":
+			self.phone.set_PDM(self.PDM)
+		elif self.comboBoxTech.currentText() == "C2k":
 			self.phone.set_PDM(self.PDM)
 		self.qlePDM.setText(unicode(self.PDM))
 		self.measure()
@@ -631,6 +651,8 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			if self.comboBoxTech.currentText() == "LTE":
 				self.phone.set_LTE_PDM(self.PDM)
 			elif self.comboBoxTech.currentText() == "WCDMA":
+				self.phone.set_PDM(self.PDM)
+			elif self.comboBoxTech.currentText() == "C2k":
 				self.phone.set_PDM(self.PDM)
 			self.qlePDM.setText(unicode(self.PDM))
 			self.measure()
@@ -681,6 +703,20 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.btnTxOff.setChecked(True)
 			self.callbox.set_GSM_channel(self.UL_ch)		# Set instrument to new channel
 			self.set_phone_GSM_on()
+		elif self.comboBoxTech.currentText() == "C2k":
+			i = CDMA_Band_UL_ch_map[self.test_band].index(self.UL_ch)
+			if (i<2):
+				i += 1
+				self.UL_ch = CDMA_Band_UL_ch_map[self.test_band][i]
+			# Set Phone on again
+			self.phone.set_Tx_off()	# Set Tx OFF
+			self.tx_on_flag = 0
+			self.btnTxOff.setChecked(True)
+			self.callbox.set_FDD_UL_channel(self.UL_ch)		# Set instrument to new channel
+			self.set_phone_C2k_on()
+			self.qlePDM.setText(unicode(self.PDM))
+			# Set SMPS
+			self.set_SMPS()
 		self.displayChannel()
 		self.measure()
 		self.print_result()
@@ -728,6 +764,20 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.btnTxOff.setChecked(True)
 			self.callbox.set_GSM_channel(self.UL_ch)		# Set instrument to new channel
 			self.set_phone_GSM_on()
+		elif self.comboBoxTech.currentText() == "C2k":
+			i = CDMA_Band_UL_ch_map[self.test_band].index(self.UL_ch)
+			if (i>0):
+				i -= 1
+				self.UL_ch = CDMA_Band_UL_ch_map[self.test_band][i]
+			# Set Phone on again
+			self.phone.set_Tx_off()	# Set Tx OFF
+			self.tx_on_flag = 0
+			self.btnTxOff.setChecked(True)
+			self.callbox.set_FDD_UL_channel(self.UL_ch)		# Set instrument to new channel
+			self.set_phone_C2k_on()
+			self.qlePDM.setText(unicode(self.PDM))
+			# Set SMPS
+			self.set_SMPS()
 		self.displayChannel()
 		self.measure()
 		self.print_result()
@@ -823,6 +873,26 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		# Set RGI
 		self.phone.set_GSM_Linear_RGI()
 	
+	def set_phone_C2k_on(self):
+		print("set phone C2k on")
+		
+		# Set band/mode
+		self.phone.set_band(self.eModeId, self.eNewMode)
+		# Set channel
+		self.phone.set_channel(self.UL_ch)
+		# Set Tx ON
+		self.phone.set_Tx_ON()
+		self.tx_on_flag = 1
+		self.btnTxOn.setChecked(True)
+		# Set waveform
+		self.phone.set_waveform()
+		# Set PA range @ WCDMA_attributes
+		self.phone.set_PA_range(self.PArange)
+		# Set PDM
+		self.phone.set_PDM(self.PDM)
+		# read ICQ
+		if not(self.MIPI_slave_ID is None):
+			self.readICQ()
 	
 	def measure(self):
 		print("measure")
@@ -889,6 +959,33 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			#read tx power
 			self.txp = self.callbox.read_GSM_power()
 		
+		elif self.comboBoxTech.currentText() == "C2k":
+			#start channel power & ACLR measurement again
+			self.callbox.init_C2k_TXP_ACLR()
+			#read tx power
+			self.txp = self.callbox.read_C2k_TXP()
+			#read ACLR
+			self.aclr = self.callbox.read_C2k_ACLR()
+			# check input level
+			level = self.callbox.get_UL_power()
+			while (abs(self.txp - level) >= 5):
+				if (self.txp > 1000):		# over range: 8820C returns "999999" when level over, 8960 reading is also transferred as "999999" 
+					if level >=25: 
+						self.print_message("Over range, please check environment.", bError=True)
+						break
+					else:
+						level = limit(level+5)
+						self.callbox.set_C2k_UL_power_FTM(level)
+				elif (self.txp < -1000):		# under range: only 8960 return specific indication, 8960 reading is transferred as "-999999" 
+					level -= 5
+					self.callbox.set_C2k_UL_power_FTM(level)
+				else:
+					level = int(self.txp)
+					self.callbox.set_C2k_UL_power_FTM(level)
+				self.callbox.init_C2k_TXP_ACLR()
+				self.txp = self.callbox.read_C2k_TXP()
+				self.aclr = self.callbox.read_C2k_ACLR()
+				
 		# current
 		if not(self.power_supply is None):
 			self.current = self.power_supply.read_current()
@@ -911,7 +1008,9 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		elif self.comboBoxTech.currentText() == "WCDMA":
 			self.tableWidget.setHorizontalHeaderLabels(["channel", "Tx Power", "PDM", "Max curr", "min curr", "Current","-5MHz", "+5MHz", "SMPS", "ICQ", "", ""])
 			#self.textBrowser.append("{0:8}, {1:8}, {2:4}, {3:6}, {4:6}, {5:7}, {6:7}".format("channel", "Tx Power", "PDM", "-5MHz", "+5MHz", "PArange", "SMPS"))
-			
+		elif self.comboBoxTech.currentText() == "C2k":
+			self.tableWidget.setHorizontalHeaderLabels(["channel", "Tx Power", "PDM", "Max curr", "min curr", "Current", "-0.885M", "+0.885M", "-1.98M", "+1.98M", "SMPS", "ICQ"])
+		
 	def print_result(self):
 		self.current_edit_row += 1
 		
@@ -1006,6 +1105,47 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			self.tableWidget.setItem((self.current_edit_row), 0, itemULCh)
 			self.tableWidget.setItem((self.current_edit_row), 1, itemTxp)
 	
+		elif self.comboBoxTech.currentText() == "C2k":
+			print("current row: {0}".format(self.current_edit_row))
+			print("row count: {0}".format(self.tableWidget.rowCount()))
+			if (self.current_edit_row == self.tableWidget.rowCount()):
+				self.tableWidget.setRowCount(self.tableWidget.rowCount()+1)
+			self.tableWidget.setCurrentCell(self.current_edit_row, 0)
+			"""
+			# for test only
+			self.UL_ch = 24300
+			self.txp = 23.4
+			self.PDM = 90
+			self.aclr = ["-41", "-40", "-43", "-42"]
+			"""
+			itemULCh = QTableWidgetItem(unicode(self.UL_ch))
+			itemTxp = QTableWidgetItem("{0:.2f}".format(self.txp))
+			itemPDM = QTableWidgetItem(unicode(self.PDM))
+			itemAclrM = QTableWidgetItem("{0:.2f}".format(self.aclr[0]))
+			itemAclrP = QTableWidgetItem("{0:.2f}".format(self.aclr[1]))
+			itemAclrAltM = QTableWidgetItem("{0:.2f}".format(self.aclr[2]))
+			itemAclrAltP = QTableWidgetItem("{0:.2f}".format(self.aclr[3]))
+			itemSMPS = QTableWidgetItem(unicode(self.SMPS_value))
+			
+			self.tableWidget.setItem((self.current_edit_row), 0, itemULCh)
+			self.tableWidget.setItem((self.current_edit_row), 1, itemTxp)
+			self.tableWidget.setItem((self.current_edit_row), 2, itemPDM)
+			self.tableWidget.setItem((self.current_edit_row), 6, itemAclrM)
+			self.tableWidget.setItem((self.current_edit_row), 7, itemAclrP)
+			self.tableWidget.setItem((self.current_edit_row), 8, itemAclrAltM)
+			self.tableWidget.setItem((self.current_edit_row), 9, itemAclrAltP)
+			self.tableWidget.setItem((self.current_edit_row), 10, itemSMPS)
+			
+			if not(self.ICQ_value is None):
+				itemICQ = QTableWidgetItem(unicode(self.ICQ_value.upper()))
+				self.tableWidget.setItem((self.current_edit_row), 11, itemICQ)
+				self.print_message("")
+			
+			if not(self.power_supply is None):
+				itemCurrent = QTableWidgetItem(unicode(self.current))
+				self.tableWidget.setItem((self.current_edit_row), 3, itemCurrent)
+				self.print_message("")
+	
 	def displayChannel(self):
 		if self.comboBoxTech.currentText() == "LTE":
 			i = LTE_Band_UL_ch_map_5M[self.test_band].index(self.UL_ch)
@@ -1018,6 +1158,10 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 		elif self.comboBoxTech.currentText() == "GSM":
 			self.qlULch.setText(unicode(self.UL_ch))
 			self.qlDLch.setText(unicode(self.UL_ch))	#GSM UL and DL is the same channel
+		elif self.comboBoxTech.currentText() == "C2k":
+			i = CDMA_Band_UL_ch_map[self.test_band].index(self.UL_ch)
+			self.qlULch.setText(unicode(self.UL_ch))
+			self.qlDLch.setText(unicode(CDMA_Band_DL_ch_map[self.test_band][i]))
 	
 	def copySelectCells(self):
 		print("copy")
