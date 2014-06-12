@@ -580,7 +580,7 @@ class Agilent8960(Instrument):
 
 	def set_C2k_band(self, band):
 		"""
-			Set C2k TCH band
+			Set C2k band
 			CALL:BAND
 			Range: IMT2000|JCDMa|KPCS |NMT450|CELLular700|SECondary800|USCellular|USPCs|USPCs1900|AWService|PAMR400 |
 					PAMR800 | PSAFety700 |CLOWer700 | TACS | DCS1800 | CCELlular | IMT2500 | US2500 |USFLink2500

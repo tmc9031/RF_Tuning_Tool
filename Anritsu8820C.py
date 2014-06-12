@@ -90,12 +90,33 @@ class Anritsu8820C(Instrument):
 				print("Switch to LTE mode fail")
 				return 1
 	
+	def switch_to_C2k(self):
+		"""
+			switch to CDMA2000 mode
+			switch ok => return 0
+			switch fail => return 1
+		"""
+		s = self.ask("STDSEL?")	#WCDMA|GSM|LTE|CDMA2K
+		print("Current Format: "+s)
+		if s == "CDMA2K":
+			print("Already CDMA2K mode")
+			return 0
+		else:
+			self.write("STDSEL CDMA2K")		#switch to CDMA2K
+			time.sleep(1)
+			if (self.ask("STDSEL?") == "CDMA2K"):
+				print("Switch to CDMA2K mode OK")
+				return 0
+			else:
+				print("Switch to CDMA2K mode fail")
+				return 1
+	
 	def preset(self):
 		"""
 			preset Anritsu 8820C
 		"""
 		print("Preset Anritsu 8820C")
-		s = self.ask("STDSEL?")	#WCDMA|GSM|LTE
+		s = self.ask("STDSEL?")	#WCDMA|GSM|LTE|CDMA2K
 		if s == "WCDMA":
 			self.preset_3GPP()
 		else:
@@ -134,6 +155,9 @@ class Anritsu8820C(Instrument):
 			self.write("AUEXTLOSSW COMMON")		# Set AUX external loss to COMMON
 		elif s == "GSM":
 			self.write("EXTLOSSW COMMON")
+		elif s == "CDMA2K":
+			self.write("EXTLOSSCFG STANDARD")
+			self.write("EXTLOSSW COMMON")
 	
 	def update_link_settings(self):
 		"""
@@ -156,8 +180,14 @@ class Anritsu8820C(Instrument):
 			Use this function only in FDD test mode
 			For Anritsu8820C, it could be used in link mode
 		"""
-		s = "ULCHAN "+str(UL_ch)	# set UL ch
-		self.write(s)
+		s = self.ask("STDSEL?")	#WCDMA|GSM|LTE|CDMA2K
+		print("Current Format: "+s)
+		if s == "CDMA2K":
+			s1 = "CHAN {0},1X".format(UL_ch)
+			print(s1)
+		else:
+			s1 = "ULCHAN "+str(UL_ch)	# set UL ch
+		self.write(s1)
 	
 	def set_IMSI(self, IMSI):
 		#set IMSI
@@ -508,7 +538,34 @@ class Anritsu8820C(Instrument):
 		s = self.ask("AVG_TXPWR? DBM")
 		Txp = Decimal(s)
 		return Txp
-		
+
+	def set_C2k_band(self, band):
+		"""
+			Set C2k band
+			BANDCLASS bc,1X
+			bc = 0 to 12,14,15,18,19,20,21
+		"""
+		self.write("BANDCLASS {0},1X".format(band[2:]))
+
+	def	set_C2k_UL_power_FTM(self, UL_power):
+		"""
+			Set C2k UL Tx power for tuning
+			Set "Input Levet Set Mode" to Manual
+			Then set "Receiver Power"
+		"""
+		self.write("ARFLVL OFF,1X")
+		s = "ILVL "+str(UL_power)	# same command as WCDMA/LTE
+		self.write(s)
+	
+	def set_C2k_RC(self, RC="11"):
+		"""
+			Set C2k Radio Config
+			Range: 11/22/33/43/54
+			Use 11 as default
+			If other RC is needed, function need to rewrite for compatibility of Agilent/Anritsu
+		"""
+		self.write("RC "+RC)
+	
 if __name__ == "__main__":
 	
 	anritsu = Anritsu8820C("GPIB::14")
@@ -526,8 +583,13 @@ if __name__ == "__main__":
 	print(anritsu.ask("*OPC?"))
 	
 	
-	
-	
+	anritsu.switch_to_C2k()
+	anritsu.preset()
+	anritsu.set_FDD_test_mode()
+	anritsu.update_path_loss()
+	anritsu.set_C2k_band("BC10")
+	anritsu.set_FDD_UL_channel(720)
+	"""
 	anritsu.switch_to_WCDMA()
 	#anritsu.switch_to_GSM()
 	anritsu.preset()
@@ -539,3 +601,4 @@ if __name__ == "__main__":
 	anritsu.set_IMSI(IMSI)
 	
 	print(anritsu.ask("CALLSTAT?"))
+	"""
