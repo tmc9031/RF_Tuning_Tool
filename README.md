@@ -72,7 +72,9 @@ Supported Device
 ----------------
 
 - Qualcomm based phone
-- Callbox: Anritsu 8820C and Agilent 8960
+- Callbox: 
+	*Anritsu 8820C: GSM/WCDMA/CDMA2000/LTE
+	*Agilent 8960: GSM/WCDMA/LTE
 - Power Supply: Good Will PPT-1830, Agilent 66319D, Agilent E3631A
 
 Requirement
@@ -85,9 +87,9 @@ Hardware
 - Power Supply (optional)
 
 Software
-- Python (tested with 2.7.5, Win7)
-- PyVisa (for callbox control)
-- PySide (Python binding for QT)
+- Python       (tested with 2.7.5, Win7)
+- PyVisa 1.4   (for callbox control)
+- PySide 1.2.0 (Python binding for QT)
 - Qualcomm Library QMSL_MSVC10R (for phone control) [1]
 	
 [1]: Qualcomm library could be found in QDART
