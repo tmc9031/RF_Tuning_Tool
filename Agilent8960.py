@@ -610,13 +610,14 @@ class Agilent8960(Instrument):
 		s = "RFANalyzer:MANual:POWer "+str(UL_power)
 		self.write(s)
 	
-	def set_C2k_RC(self, RC="F1R1"):
+	def set_C2k_RC(self, RC=1):
 		"""
 			Set C2k Radio Config
 			Range: F1R1|F2R2|F3R3|F4R3|F5R4|F11R8
 			Use F1R1 as default
 		"""
-		self.write("CALL:RCONfig "+RC)
+		RC_dict = {1:'F1R1', 2:'F2R2', 3:'F3R3', 4:'F4R3', 5:'F5R4', 6:'F11R8'}
+		self.write("CALL:RCONfig {0}".format(RC_dict[RC]))
 	
 	def setup_C2k_channel_power_mea(self, count = 20):
 		"""
@@ -683,7 +684,7 @@ class Agilent8960(Instrument):
 		"""
 			read C2k ACLR measurement (average)
 			if integrity is fail, return ACLR and print error message
-			if integrity is ok, return ACLR in [-0.885MHz, +5MHz, -10MHz, +10MHz] fromat
+			if integrity is ok, return ACLR in [-0.885MHz, +0.885MHz, -1.980MHz, +1.980MHz] fromat
 			
 			Reading format:
 			"FETC:CTXS?" (average)

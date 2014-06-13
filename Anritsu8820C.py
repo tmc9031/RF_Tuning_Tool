@@ -557,14 +557,66 @@ class Anritsu8820C(Instrument):
 		s = "ILVL "+str(UL_power)	# same command as WCDMA/LTE
 		self.write(s)
 	
-	def set_C2k_RC(self, RC="11"):
+	def set_C2k_RC(self, RC=1):
 		"""
 			Set C2k Radio Config
 			Range: 11/22/33/43/54
 			Use 11 as default
-			If other RC is needed, function need to rewrite for compatibility of Agilent/Anritsu
+			Use TM_RC for test mode
 		"""
-		self.write("RC "+RC)
+		RC_dict = {1:'11', 2:'22', 3:'33', 4:'43', 5:'54'}
+		self.write("TM_RC {0}".format(RC_dict[RC]))
+		
+	def setup_C2k_channel_power_mea(self, count = 20):
+		"""
+			C2k channel power measurement settings
+			count: measure count
+		"""
+		#Tx power setting
+		self.write("PWR_MEAS ON,1X")	# Set Power Measurement ON
+		s = "PWR_AVG {0},1X".format(count)	#multi-measurement ON and set measure count
+		self.write(s)
+		
+	def setup_C2k_ACLR_mea(self, count = 10):
+		"""
+			C2k Tx Spurious Emissions measurement settings
+			count: measure count
+			set default count to 10, 20 times is too slow for 8960
+		"""
+		#ACLR setting
+		self.write("SPR_MEAS ON,1X")
+		s = "SPR_AVG {0},1X".format(count)
+		self.write(s)	#multi-measurement ON and count = 10
+		
+	def init_C2k_TXP_ACLR(self):
+		self.write("SWP")
+	
+	def init_C2k_TXP(self):
+		self.write("SWP")
+	
+	def init_C2k_ACLR(self):
+		self.write("SWP")
+	
+	def read_C2k_TXP(self):
+		"""
+			read channel power measurement
+		"""
+		#read tx power
+		s = self.ask("AVG_POWER?")
+		Txp = Decimal(s)
+		return Txp
+	
+	def read_C2k_ACLR(self):
+		"""
+			Read C2k Tx Spurious emission
+			return in [0.885MHz, 0, 1.980MHz, 0] fromat
+		"""
+		ACLR = []
+		ACLR.append((Decimal(self.ask("SPRPWR? AB,DBC30K"))))
+		ACLR.append((Decimal(0)))
+		ACLR.append((Decimal(self.ask("SPRPWR? BC,DBC30K"))))
+		ACLR.append((Decimal(0)))
+		return ACLR
 	
 if __name__ == "__main__":
 	
@@ -589,6 +641,9 @@ if __name__ == "__main__":
 	anritsu.update_path_loss()
 	anritsu.set_C2k_band("BC10")
 	anritsu.set_FDD_UL_channel(720)
+	anritsu.set_C2k_UL_power_FTM(24)
+	anritsu.set_C2k_RC()
+	anritsu.setup_C2k_channel_power_mea()
 	"""
 	anritsu.switch_to_WCDMA()
 	#anritsu.switch_to_GSM()
