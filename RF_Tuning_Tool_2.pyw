@@ -147,11 +147,19 @@ class MainDialog(QDialog, mainGui2.Ui_mainDialog):
 			print("GPIB::{0}".format(int(self.qleGPIB_2.text())))
 			self.power_supply = PS_GW_PPT1830("GPIB::{0}".format(int(self.qleGPIB_2.text())))
 			s = self.power_supply.identity()
-			if not("GOOD WILL;PPT-1830;" in s):
+			ps_support = False
+			for ps_name in Power_Suppply_list:
+				print(ps_name)
+				if (ps_name in s):
+					ps_support = True
+					break
+			
+			if ps_support: 
+				self.print_message(s)
+			else:
 				self.power_supply = None
 				self.print_message("Power supply NOT supported", bError=True)
-			else:
-				self.print_message(s)
+		
 		except Error as e:
 			self.print_message("Power Supply error! Please check GPIB address.", bError=True)
 			print(e)

@@ -40,6 +40,8 @@ TARGET_PWR = 23.5
 PDM_start = 80
 PDM_end = 90
 
+# Tested Power Supply list
+Power_Suppply_list = ["GOOD WILL;PPT-1830;", "HEWLETT-PACKARD,E3631A,", "Agilent Technologies,66319D"]
 
 # WCDMA attributes
 #channel list
