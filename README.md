@@ -1,7 +1,7 @@
 RF_Tuning_Tool
 ==============
 
-A Python program to facilitate GSM/WCDMA/LTE RF tuning and reduce manual operation.
+A Python program to facilitate GSM / WCDMA / CDMA2000 / LTE RF tuning and reduce manual operation.
 
 
 Introduction
@@ -73,15 +73,16 @@ Supported Device
 
 - Qualcomm based phone
 - Callbox: Anritsu 8820C and Agilent 8960
-- Power Supply: Good Will PPT-1830
+- Power Supply: Good Will PPT-1830, Agilent 66319D, Agilent E3631A
 
 Requirement
 -----------
 
 Hardware
 - Qualcomm based device
-- Callbox with GPIB (Agilent 8960/ Anritsu 8820C)
+- Callbox
 - GPIB (tested with NI USB-GPIB adapter)
+- Power Supply (optional)
 
 Software
 - Python (tested with 2.7.5, Win7)
