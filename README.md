@@ -73,8 +73,8 @@ Supported Device
 
 - Qualcomm based phone
 - Callbox: 
-	*Anritsu 8820C: GSM/WCDMA/CDMA2000/LTE
-	*Agilent 8960: GSM/WCDMA/LTE
+	* Anritsu 8820C: GSM/WCDMA/CDMA2000/LTE
+	* Agilent 8960: GSM/WCDMA/LTE
 - Power Supply: Good Will PPT-1830, Agilent 66319D, Agilent E3631A
 
 Requirement
